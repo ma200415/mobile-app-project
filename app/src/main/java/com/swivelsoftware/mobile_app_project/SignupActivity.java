@@ -1,10 +1,19 @@
 package com.swivelsoftware.mobile_app_project;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.swivelsoftware.mobile_app_project.classes.Signup;
+
+import org.json.JSONException;
 
 public class SignupActivity extends AppCompatActivity {
     EditText firstName, lastName, email, password, reg_code;
@@ -22,26 +31,59 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void signup(View view) {
-        boolean isValid = true;
+        Signup signup = new Signup(firstName, lastName, email, password, reg_code);
 
-        EditText[] requiredFields = {firstName, lastName, email, password};
+        if (!signup.isValid()) return;
 
-        for (EditText rf : requiredFields) {
-            if (rf.getText().toString().trim().equals("")) {
-                rf.setError("Required");
-                isValid = false;
-            }
-        }
+        RequestQueue queue = Volley.newRequestQueue(this);
 
-        if (!isValid) return;
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                "http://10.0.2.2:3001/signup",
+                signup.getJSONObject(),
+                response -> {
+                    try {
+                        String message = response.getString("message");
 
-        String _firstName = firstName.getText().toString();
-        String _lastName = lastName.getText().toString();
-        String _email = email.getText().toString();
-        String _password = password.getText().toString();
-        String _reg_code = reg_code.getText().toString();
+                        if (response.has("success") && response.getBoolean("success")) {
+                            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+                            goSignin(view);
+                        } else {
+                            switch (response.getString("errorType")) {
+                                case "email":
+                                    email.setError(message);
+                                    email.requestFocus();
+                                    break;
+                                case "firstName":
+                                    firstName.setError(message);
+                                    firstName.requestFocus();
+                                    break;
+                                case "lastName":
+                                    lastName.setError(message);
+                                    lastName.requestFocus();
+                                    break;
+                                case "password":
+                                    password.setError(message);
+                                    password.requestFocus();
+                                    break;
+                                case "code":
+                                    reg_code.setError(message);
+                                    reg_code.requestFocus();
+                                    break;
+                                default:
+                                    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+                                    break;
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                },
+                error -> Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show()
+        );
 
-
+        queue.add(jsonObjectRequest);
     }
 
     public void goSignin(View view) {
