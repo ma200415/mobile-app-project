@@ -3,16 +3,16 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in</string>
+    <string name="action_login">Login</string>
     <string name="action_sign_up">Sign up</string>
-    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_login_short">Login</string>
     <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_email">Not a valid email</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="reg_code">Code</string>
     <string name="link_sign_up">Don\'t have an account? Sign Up</string>
-    <string name="link_sign_in">Already have an account? Sign in</string>
+    <string name="link_login">Already have an account? Login</string>
     <string name="firstName">First Name</string>
     <string name="lastName">Last Name</string>
 </resources>

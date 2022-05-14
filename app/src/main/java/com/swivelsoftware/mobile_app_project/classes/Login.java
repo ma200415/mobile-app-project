@@ -5,21 +5,18 @@ import android.widget.EditText;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Signup {
-    EditText lastName, firstName, email, password, code;
+public class Login {
+    EditText email, password;
 
-    public Signup(EditText lastName, EditText firstName, EditText email, EditText password, EditText code) {
-        this.lastName = lastName;
-        this.firstName = firstName;
+    public Login(EditText email, EditText password) {
         this.email = email;
         this.password = password;
-        this.code = code;
     }
 
     public boolean isValid() {
         boolean valid = true;
 
-        EditText[] requiredInput = {firstName, lastName, email, password};
+        EditText[] requiredInput = {email, password};
 
         for (EditText rf : requiredInput) {
             if (rf.getText().toString().trim().equals("")) {
@@ -39,11 +36,8 @@ public class Signup {
         JSONObject jsonObject = new JSONObject();
 
         try {
-            jsonObject.put("lastName", lastName.getText().toString());
-            jsonObject.put("firstName", firstName.getText().toString());
             jsonObject.put("email", email.getText().toString());
             jsonObject.put("password", password.getText().toString());
-            jsonObject.put("code", code.getText().toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
