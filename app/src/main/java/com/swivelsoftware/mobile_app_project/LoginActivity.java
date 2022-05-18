@@ -1,7 +1,9 @@
 package com.swivelsoftware.mobile_app_project;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -12,6 +14,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.swivelsoftware.mobile_app_project.classes.Auth;
 import com.swivelsoftware.mobile_app_project.classes.Login;
 
 import org.json.JSONException;
@@ -42,8 +45,12 @@ public class LoginActivity extends AppCompatActivity {
                 response -> {
                     try {
                         if (response.has("success") && response.getBoolean("success")) {
-                            Toast.makeText(this, "ok", Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, getString(R.string.welcome), Toast.LENGTH_LONG).show();
 
+                            Auth auth = new Auth(this);
+                            auth.setAuthToken(response.getString("authToken"));
+
+                            this.finish();
                         } else {
                             String message = response.getString("message");
 
