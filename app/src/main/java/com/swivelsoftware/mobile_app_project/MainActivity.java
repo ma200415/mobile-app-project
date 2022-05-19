@@ -1,14 +1,15 @@
 package com.swivelsoftware.mobile_app_project;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -16,26 +17,17 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.swivelsoftware.mobile_app_project.classes.Auth;
 import com.swivelsoftware.mobile_app_project.databinding.ActivityMainBinding;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
-
 public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
 
-    ActivityMainBinding binding;
+    NavigationView navigationView;
+
+    ActivityResultLauncher<Intent> mainActivityResultLauncher;
 
     Auth auth;
 
@@ -43,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         auth = new Auth(this);
@@ -52,9 +44,9 @@ public class MainActivity extends AppCompatActivity {
         binding.appBarMain.fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show());
         DrawerLayout drawer = binding.drawerLayout;
-        NavigationView navigationView = binding.navView;
+        navigationView = binding.navView;
 
-        setHeader(navigationView);
+        setHeader();
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -65,6 +57,22 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        mainActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+
+                        if (data != null) {
+                            switch (data.getStringExtra("ACTION")) {
+                                case "login":
+                                    setHeader();
+                                    break;
+                            }
+                        }
+                    }
+                });
     }
 
     @Override
@@ -81,70 +89,35 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    public void goSignin() {
+    private void goSignin() {
         Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        mainActivityResultLauncher.launch(intent);
     }
 
-    private void setHeader(NavigationView navigationView) {
+    private void logout() {
+        auth.setAuthToken("");
+        setHeader();
+    }
+
+    public void setHeader() {
         View headerView = navigationView.getHeaderView(0);
 
         TextView userName = headerView.findViewById(R.id.userName);
-        TextView email = headerView.findViewById(R.id.userEmail);
+        TextView userEmail = headerView.findViewById(R.id.userEmail);
         Button accountAction = headerView.findViewById(R.id.accountAction);
 
-        String authToken = auth.getAuthToken();
-        Log.d("+++", authToken);
-        if (authToken.equals("")) {
+        String authToken = auth.getUserString(auth.authTokenKey);
+
+        if (authToken == null || authToken.equals("")) {
             userName.setText(getString(R.string.welcome));
-            email.setText("");
+            userEmail.setText("");
             accountAction.setText(getString(R.string.action_login));
             accountAction.setOnClickListener(v -> goSignin());
         } else {
-            RequestQueue queue = Volley.newRequestQueue(this);
-
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
-                    Request.Method.POST,
-                    "http://10.0.2.2:3001/auth",
-                    null,
-                    response -> {
-                        try {
-                            if (response.has("success") && response.getBoolean("success")) {
-                                JSONObject userPayload = response.getJSONObject("payload");
-//todo refresh layout
-                                String lastName = userPayload.getString("lastName");
-                                String firstName = userPayload.getString("firstName");
-                                String userEmail = userPayload.getString("email");
-                                String role = userPayload.getString("role");
-                                Boolean admin = userPayload.getBoolean("admin");
-
-                                userName.setText(String.format("%s %s", lastName, firstName));
-                                email.setText(userEmail);
-                                accountAction.setText(getString(R.string.action_logout));
-                                accountAction.setOnClickListener(v -> auth.logout());
-                            } else {
-
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    },
-                    error -> Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show()
-            ) {
-                @Override
-                public Map<String, String> getHeaders() throws AuthFailureError {
-                    String bearer = "Bearer ".concat(authToken);
-                    Map<String, String> headersSys = super.getHeaders();
-                    Map<String, String> headers = new HashMap<>();
-                    headersSys.remove("Authorization");
-                    headers.put("Authorization", bearer);
-                    headers.putAll(headersSys);
-                    return headers;
-                }
-            };
-
-            queue.add(jsonObjectRequest);
+            userName.setText(String.format("%s %s", auth.getUserString(auth.lastNameKey), auth.getUserString(auth.firstNameKey)));
+            userEmail.setText(String.format("%s", auth.getUserString(auth.emailKey)));
+            accountAction.setText(getString(R.string.action_logout));
+            accountAction.setOnClickListener(v -> logout());
         }
     }
 }

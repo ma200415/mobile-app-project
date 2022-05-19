@@ -1,9 +1,7 @@
 package com.swivelsoftware.mobile_app_project;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -18,6 +16,7 @@ import com.swivelsoftware.mobile_app_project.classes.Auth;
 import com.swivelsoftware.mobile_app_project.classes.Login;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
     EditText email, password;
@@ -45,10 +44,23 @@ public class LoginActivity extends AppCompatActivity {
                 response -> {
                     try {
                         if (response.has("success") && response.getBoolean("success")) {
-                            Toast.makeText(this, getString(R.string.welcome), Toast.LENGTH_LONG).show();
+                            String authToken = response.getString("authToken");
+                            JSONObject userObject = response.getJSONObject("user");
+                            JSONObject payloadObject = userObject.getJSONObject("payload");
+                            String userID = payloadObject.getString("_id");
+                            String lastName = payloadObject.getString("lastName");
+                            String firstName = payloadObject.getString("firstName");
+                            String email = payloadObject.getString("email");
+                            boolean admin = payloadObject.getBoolean("admin");
+                            String role = payloadObject.getString("role");
 
                             Auth auth = new Auth(this);
-                            auth.setAuthToken(response.getString("authToken"));
+                            auth.setAuthToken(authToken);
+                            auth.setUser(userID, lastName, firstName, email, admin, role);
+
+                            Intent intent = new Intent();
+                            intent.putExtra("ACTION", "login");
+                            setResult(RESULT_OK, intent);
 
                             this.finish();
                         } else {

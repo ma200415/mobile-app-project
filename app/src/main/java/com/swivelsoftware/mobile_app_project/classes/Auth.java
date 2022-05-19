@@ -8,26 +8,46 @@ import android.content.SharedPreferences;
 public class Auth {
     Context context;
 
-    final String spName = "user";
-    final String spKey = "AUTHTOKEN";
+    final private String spName = "user";
+
+    final public String authTokenKey = "AUTHTOKEN";
+    final public String userIDKey = "USERID";
+    final public String lastNameKey = "LASTNAME";
+    final public String firstNameKey = "FIRSTNAME";
+    final public String emailKey = "EMAIL";
+    final public String adminKey = "ADMIN";
+    final public String roleKey = "ROLE";
 
     public Auth(Context context) {
         this.context = context;
     }
 
-    public String getAuthToken() {
-        return context.getSharedPreferences(spName, MODE_PRIVATE)
-                .getString(spKey, "");
-    }
-
     public void setAuthToken(String token) {
         SharedPreferences pref = context.getSharedPreferences(spName, MODE_PRIVATE);
         pref.edit()
-                .putString(spKey, token)
+                .putString(authTokenKey, token)
                 .apply();
     }
 
-    public void logout() {
-        setAuthToken("");
+    public void setUser(String userID, String lastName, String firstName, String email, boolean admin, String role) {
+        SharedPreferences pref = context.getSharedPreferences(spName, MODE_PRIVATE);
+        pref.edit()
+                .putString(userIDKey, userID)
+                .putString(lastNameKey, lastName)
+                .putString(firstNameKey, firstName)
+                .putString(emailKey, email)
+                .putBoolean(adminKey, admin)
+                .putString(roleKey, role)
+                .apply();
+    }
+
+    public String getUserString(String key) {
+        return context.getSharedPreferences(spName, MODE_PRIVATE)
+                .getString(key, "");
+    }
+
+    public boolean getUserBoolean(String key) {
+        return context.getSharedPreferences(spName, MODE_PRIVATE)
+                .getBoolean(key, false);
     }
 }
