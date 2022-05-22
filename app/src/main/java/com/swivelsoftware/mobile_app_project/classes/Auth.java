@@ -18,6 +18,9 @@ public class Auth {
     final public String adminKey = "ADMIN";
     final public String roleKey = "ROLE";
 
+    final public String roleEmployee = "employee";
+    final public String rolePublic = "public";
+
     public Auth(Context context) {
         this.context = context;
     }
