@@ -4,10 +4,12 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/drawable/ic_baseline_message_24.xml" value="0.21875" />
+        <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/activity_edit_craft.xml" value="0.307518115942029" />
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/activity_login.xml" value="0.31431159420289856" />
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/activity_main.xml" value="0.3079710144927536" />
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/activity_signup.xml" value="0.3079710144927536" />
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/craft_card.xml" value="0.16666666666666666" />
+        <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/craft_store_list_item.xml" value="0.1" />
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/fragment_home.xml" value="0.358695652173913" />
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/fragment_slideshow.xml" value="0.358695652173913" />
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/nav_header_main.xml" value="0.31023550724637683" />

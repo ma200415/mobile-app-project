@@ -1,5 +1,6 @@
 package com.swivelsoftware.mobile_app_project.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +16,10 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
+import com.swivelsoftware.mobile_app_project.EditCraftActivity;
+import com.swivelsoftware.mobile_app_project.LoginActivity;
 import com.swivelsoftware.mobile_app_project.R;
+import com.swivelsoftware.mobile_app_project.SignupActivity;
 import com.swivelsoftware.mobile_app_project.classes.Auth;
 import com.swivelsoftware.mobile_app_project.databinding.FragmentHomeBinding;
 

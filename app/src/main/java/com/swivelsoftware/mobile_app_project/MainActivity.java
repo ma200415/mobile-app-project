@@ -120,4 +120,9 @@ public class MainActivity extends AppCompatActivity {
             accountAction.setOnClickListener(v -> logout());
         }
     }
+
+    public void goEditCraft(View view) {
+        Intent intent = new Intent(view.getContext(), EditCraftActivity.class);
+        startActivity(intent);
+    }
 }
