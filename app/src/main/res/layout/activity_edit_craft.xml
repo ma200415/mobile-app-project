@@ -10,6 +10,16 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".EditCraftActivity">
 
+    <TextView
+        android:id="@+id/craft_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/store"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
@@ -18,10 +28,12 @@
         android:hint="@string/store"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/craft_mode">
 
         <AutoCompleteTextView
+            android:id="@+id/input_store"
             android:layout_width="match_parent"
+            android:labelFor="@id/store"
             android:layout_height="wrap_content"
             android:inputType="none" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -39,6 +51,7 @@
         app:layout_constraintTop_toBottomOf="@+id/store">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -54,6 +67,7 @@
         app:layout_constraintTop_toBottomOf="@+id/date">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_remark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
@@ -61,12 +75,12 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/link_signup"
-        android:layout_width="wrap_content"
+        android:id="@+id/submit"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:onClick="goSignup"
-        android:text="@string/link_sign_up"
+        android:onClick="submit"
+        android:text="@string/submit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"

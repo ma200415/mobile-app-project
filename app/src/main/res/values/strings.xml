@@ -28,9 +28,11 @@
     <string name="store">Store</string>
     <string name="remark">Remark</string>
     <string name="validity_period">Validity period</string>
-
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="date">Date</string>
+    <string name="add">Add</string>
+    <string name="edit">Edit</string>
+    <string name="submit">Submit</string>
 </resources>

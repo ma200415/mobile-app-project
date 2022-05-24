@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -20,6 +21,7 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.swivelsoftware.mobile_app_project.classes.Auth;
+import com.swivelsoftware.mobile_app_project.classes.Craft;
 import com.swivelsoftware.mobile_app_project.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
@@ -106,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
         TextView userEmail = headerView.findViewById(R.id.userEmail);
         Button accountAction = headerView.findViewById(R.id.accountAction);
 
-        String authToken = auth.getUserString(auth.authTokenKey);
+        String authToken = auth.getUserString(Auth.authTokenKey);
 
         if (authToken == null || authToken.equals("")) {
             userName.setText(getString(R.string.welcome));
@@ -114,15 +116,25 @@ public class MainActivity extends AppCompatActivity {
             accountAction.setText(getString(R.string.action_login));
             accountAction.setOnClickListener(v -> goSignin());
         } else {
-            userName.setText(String.format("%s %s", auth.getUserString(auth.lastNameKey), auth.getUserString(auth.firstNameKey)));
-            userEmail.setText(String.format("%s", auth.getUserString(auth.emailKey)));
+            userName.setText(String.format("%s %s", auth.getUserString(Auth.lastNameKey), auth.getUserString(Auth.firstNameKey)));
+            userEmail.setText(String.format("%s", auth.getUserString(Auth.emailKey)));
             accountAction.setText(getString(R.string.action_logout));
             accountAction.setOnClickListener(v -> logout());
         }
     }
 
     public void goEditCraft(View view) {
-        Intent intent = new Intent(view.getContext(), EditCraftActivity.class);
+        startCraft(Craft.editMode);
+    }
+
+    public void goAddCraft(MenuItem item) {
+        startCraft(Craft.addMode);
+    }
+
+    private void startCraft(String mode) {
+        Intent intent = new Intent(this, EditCraftActivity.class);
+        intent.putExtra("mode", mode);
+
         startActivity(intent);
     }
 }

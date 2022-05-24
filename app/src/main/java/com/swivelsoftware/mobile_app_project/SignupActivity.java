@@ -80,7 +80,10 @@ public class SignupActivity extends AppCompatActivity {
                         Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 },
-                error -> Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show()
+                error -> {
+                    error.printStackTrace();
+                    Toast.makeText(this, error.toString(), Toast.LENGTH_LONG).show();
+                }
         );
 
         queue.add(jsonObjectRequest);

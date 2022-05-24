@@ -8,18 +8,18 @@ import android.content.SharedPreferences;
 public class Auth {
     Context context;
 
-    final private String spName = "user";
+    final private static String spName = "user";
 
-    final public String authTokenKey = "AUTHTOKEN";
-    final public String userIDKey = "USERID";
-    final public String lastNameKey = "LASTNAME";
-    final public String firstNameKey = "FIRSTNAME";
-    final public String emailKey = "EMAIL";
-    final public String adminKey = "ADMIN";
-    final public String roleKey = "ROLE";
+    final public static String authTokenKey = "AUTHTOKEN";
+    final public static String userIDKey = "USERID";
+    final public static String lastNameKey = "LASTNAME";
+    final public static String firstNameKey = "FIRSTNAME";
+    final public static String emailKey = "EMAIL";
+    final public static String adminKey = "ADMIN";
+    final public static String roleKey = "ROLE";
 
-    final public String roleEmployee = "employee";
-    final public String rolePublic = "public";
+    final public static String roleEmployee = "employee";
+    final public static String rolePublic = "public";
 
     public Auth(Context context) {
         this.context = context;
