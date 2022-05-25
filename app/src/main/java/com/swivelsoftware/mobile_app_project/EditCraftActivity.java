@@ -46,7 +46,7 @@ public class EditCraftActivity extends AppCompatActivity {
 
         ArrayAdapter sss = new ArrayAdapter(this, R.layout.craft_store_list_item, stores);
 
-        AutoCompleteTextView sssss = (AutoCompleteTextView) binding.store.getEditText();
+        AutoCompleteTextView sssss = (AutoCompleteTextView) binding.craftStore.getEditText();
 
         sssss.setAdapter(sss);
 
@@ -62,7 +62,7 @@ public class EditCraftActivity extends AppCompatActivity {
                 break;
         }
 
-        binding.date.setEndIconOnClickListener(event -> showDatePicker());
+        binding.craftDate.setEndIconOnClickListener(event -> showDatePicker());
     }
 
     public void showDatePicker() {
@@ -80,21 +80,22 @@ public class EditCraftActivity extends AppCompatActivity {
             fromCal.setTimeInMillis((long) result.first);
             toCal.setTimeInMillis((long) result.second);
 
-            binding.date.getEditText().setText(fromCal.getTime().toString());
+            binding.craftDate.getEditText().setText(fromCal.getTime().toString());
         });
 
         dateRangePicker.show(getSupportFragmentManager(), "dateRangePicker");
     }
 
     public void submit(View view) {
+        String name = binding.inputName.getText().toString();
         String store = binding.inputStore.getText().toString();
         String date = binding.inputDate.getText().toString();
-        String remark = binding.inputRemark.getText().toString();
+        String description = binding.inputDescription.getText().toString();
 
-        Craft craft = new Craft(store, date, remark);
+        Craft craft = new Craft(name, store, date, description);
 
         RequestQueue queue = Volley.newRequestQueue(this);
-
+Log.d("+++",craft.getJSONObject()+"");
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 "http://10.0.2.2:3001/dog/add",

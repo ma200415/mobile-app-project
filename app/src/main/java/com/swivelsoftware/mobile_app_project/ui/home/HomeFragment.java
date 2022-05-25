@@ -1,10 +1,12 @@
 package com.swivelsoftware.mobile_app_project.ui.home;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,6 +24,10 @@ import com.swivelsoftware.mobile_app_project.databinding.FragmentHomeBinding;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
@@ -55,17 +61,35 @@ public class HomeFragment extends Fragment {
                             try {
                                 JSONObject jsonObject = response.getJSONObject(i);
 
+                                String name = jsonObject.getString("name");
                                 String store = jsonObject.getString("store");
-                                String remark = jsonObject.getString("remark");
+                                String description = jsonObject.getString("description");
                                 String date = jsonObject.getString("date");
                                 String addBy = jsonObject.getString("addBy");
                                 String addTimestamp = jsonObject.getString("addTimestamp");
+
+                                TextView titleView = to_add.findViewById(R.id.craft_card_title);
+                                TextView contentView = to_add.findViewById(R.id.craft_card_content);
 
                                 MaterialButton booking = to_add.findViewById(R.id.booking);
                                 MaterialButton edit = to_add.findViewById(R.id.edit);
                                 MaterialButton delete = to_add.findViewById(R.id.delete);
                                 MaterialButton message = to_add.findViewById(R.id.message);
                                 MaterialButton bookmark = to_add.findViewById(R.id.bookmark);
+
+                                String content = String.format("%s: %s\n" +
+                                                "%s: %s\n" +
+                                                "%s: %s\n" +
+                                                "%s: %s\n" +
+                                                "%s\n",
+                                        getString(R.string.store), store,
+                                        getString(R.string.description),                                        description,
+                                        getString(R.string.date),date,
+                                        getString(R.string.addBy), addBy,
+                                        addTimestamp);
+
+                                titleView.setText(name);
+                                contentView.setText(content);
 
                                 if (role.equals(Auth.roleEmployee)) {
                                     booking.setVisibility(View.GONE);
@@ -74,8 +98,6 @@ public class HomeFragment extends Fragment {
 //                edit.setVisibility(View.GONE);
 //                delete.setVisibility(View.GONE);
                                 }
-
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

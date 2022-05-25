@@ -20,7 +20,7 @@
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="194dp"
+                android:layout_height="wrap_content"
                 android:scaleType="centerCrop" />
 
             <LinearLayout
@@ -33,7 +33,6 @@
                     android:id="@+id/craft_card_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/app_name"
                     android:textAppearance="?attr/textAppearanceHeadline6" />
 
                 <TextView
@@ -41,15 +40,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@string/app_name"
-                    android:textAppearance="?attr/textAppearanceBody2"
-                    android:textColor="?android:attr/textColorSecondary" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="@string/app_name"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary" />
             </LinearLayout>
@@ -66,7 +56,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="Book" />
+                    android:text="@string/booking" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/edit"
@@ -75,7 +65,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:onClick="goEditCraft"
-                    android:text="Edit" />
+                    android:text="@string/edit" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/delete"
@@ -83,7 +73,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
-                    android:text="Delete" />
+                    android:text="@string/delete" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@id/message"
