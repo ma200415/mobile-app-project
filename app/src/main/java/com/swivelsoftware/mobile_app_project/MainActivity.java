@@ -3,6 +3,7 @@ package com.swivelsoftware.mobile_app_project;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+
     private void goSignin() {
         Intent intent = new Intent(this, LoginActivity.class);
         mainActivityResultLauncher.launch(intent);
@@ -124,6 +126,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void goEditCraft(View view) {
+        View v = view.getRootView();
+
+        TextView title = v.findViewById(R.id.craft_card_title);
+        TextView content = v.findViewById(R.id.craft_card_content);
+
+        Log.d("+-+-+-+-", content.getText().toString() + "");
         startCraft(Craft.editMode);
     }
 

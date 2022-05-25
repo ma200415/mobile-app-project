@@ -90,6 +90,6 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void goSignin(View view) {
-        this.finish();
+        finish();
     }
 }

@@ -1,7 +1,7 @@
 package com.swivelsoftware.mobile_app_project.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,33 +18,57 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.button.MaterialButton;
+import com.swivelsoftware.mobile_app_project.EditCraftActivity;
 import com.swivelsoftware.mobile_app_project.R;
 import com.swivelsoftware.mobile_app_project.classes.Auth;
+import com.swivelsoftware.mobile_app_project.classes.Craft;
 import com.swivelsoftware.mobile_app_project.databinding.FragmentHomeBinding;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
 
     Auth auth;
 
+    View root;
+
+    LayoutInflater _inflater;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        _inflater = inflater;
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
+        root = binding.getRoot();
 
         auth = new Auth(root.getContext());
+
+//        final TextView textView = binding.textHome;
+//        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+//            @Override
+//            public void onChanged(@Nullable String s) {
+//                textView.setText(s);
+//            }
+//        });
+        return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        craftCard();
+    }
+
+    private void craftCard() {
         String role = auth.getUserString(Auth.roleKey);
 
         LinearLayout craft_card_layout = binding.craftCardLayout;
+
+        craft_card_layout.removeAllViews();
 
         RequestQueue queue = Volley.newRequestQueue(root.getContext());
 
@@ -54,19 +78,13 @@ public class HomeFragment extends Fragment {
                 null,
                 response -> {
                     if (response != null) {
-
                         for (int i = 0; i < response.length(); i++) {
-                            View to_add = inflater.inflate(R.layout.craft_card, craft_card_layout, false);
+                            View to_add = _inflater.inflate(R.layout.craft_card, craft_card_layout, false);
 
                             try {
                                 JSONObject jsonObject = response.getJSONObject(i);
 
-                                String name = jsonObject.getString("name");
-                                String store = jsonObject.getString("store");
-                                String description = jsonObject.getString("description");
-                                String date = jsonObject.getString("date");
-                                String addBy = jsonObject.getString("addBy");
-                                String addTimestamp = jsonObject.getString("addTimestamp");
+                                Craft craft = new Craft(jsonObject);
 
                                 TextView titleView = to_add.findViewById(R.id.craft_card_title);
                                 TextView contentView = to_add.findViewById(R.id.craft_card_content);
@@ -77,18 +95,26 @@ public class HomeFragment extends Fragment {
                                 MaterialButton message = to_add.findViewById(R.id.message);
                                 MaterialButton bookmark = to_add.findViewById(R.id.bookmark);
 
+                                edit.setOnClickListener(l -> {
+                                    Intent intent = new Intent(root.getContext(), EditCraftActivity.class);
+                                    intent.putExtra("mode", Craft.editMode);
+                                    intent.putExtra("craftJson", jsonObject.toString());
+
+                                    startActivity(intent);
+                                });
+
                                 String content = String.format("%s: %s\n" +
                                                 "%s: %s\n" +
                                                 "%s: %s\n" +
                                                 "%s: %s\n" +
                                                 "%s\n",
-                                        getString(R.string.store), store,
-                                        getString(R.string.description),                                        description,
-                                        getString(R.string.date),date,
-                                        getString(R.string.addBy), addBy,
-                                        addTimestamp);
+                                        getString(R.string.store), craft.store,
+                                        getString(R.string.description), craft.description,
+                                        getString(R.string.date), craft.date,
+                                        getString(R.string.addBy), craft.addBy,
+                                        craft.addTimestamp);
 
-                                titleView.setText(name);
+                                titleView.setText(craft.name);
                                 contentView.setText(content);
 
                                 if (role.equals(Auth.roleEmployee)) {
@@ -113,15 +139,6 @@ public class HomeFragment extends Fragment {
         );
 
         queue.add(jsonObjectRequest);
-
-//        final TextView textView = binding.textHome;
-//        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-//            @Override
-//            public void onChanged(@Nullable String s) {
-//                textView.setText(s);
-//            }
-//        });
-        return root;
     }
 
     @Override

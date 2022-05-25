@@ -62,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
                             intent.putExtra("ACTION", "login");
                             setResult(RESULT_OK, intent);
 
-                            this.finish();
+                            finish();
                         } else {
                             String message = response.getString("message");
 

@@ -5,13 +5,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Pair;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -27,6 +25,7 @@ import org.json.JSONObject;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class EditCraftActivity extends AppCompatActivity {
     ActivityEditCraftBinding binding;
@@ -34,6 +33,9 @@ public class EditCraftActivity extends AppCompatActivity {
     final String[] stores = new String[]{"Wong Tai Sin", "Tsuen Wan", "Causeway Bay", "Mong Kok"};
 
     Auth auth;
+    Craft craft;
+
+    String mode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,14 +46,13 @@ public class EditCraftActivity extends AppCompatActivity {
 
         auth = new Auth(this);
 
-        ArrayAdapter sss = new ArrayAdapter(this, R.layout.craft_store_list_item, stores);
+        ArrayAdapter<String> storeAdapter = new ArrayAdapter<>(this, R.layout.craft_store_list_item, stores);
 
-        AutoCompleteTextView sssss = (AutoCompleteTextView) binding.craftStore.getEditText();
-
-        sssss.setAdapter(sss);
+        binding.inputStore.setAdapter(storeAdapter);
 
         Intent intent = getIntent();
-        String mode = intent.getStringExtra("mode");
+
+        mode = intent.getStringExtra("mode");
 
         switch (mode) {
             case Craft.addMode:
@@ -59,6 +60,22 @@ public class EditCraftActivity extends AppCompatActivity {
                 break;
             case Craft.editMode:
                 binding.craftMode.setText(R.string.edit);
+
+                if (intent.hasExtra("craftJson")) {
+                    try {
+                        JSONObject craftJson = new JSONObject(intent.getStringExtra("craftJson"));
+
+                        craft = new Craft(craftJson);
+
+                        binding.inputName.setEnabled(false);
+                        binding.inputName.setText(craft.name);
+                        binding.inputStore.setText(craft.store, false);
+                        binding.inputDate.setText(craft.date);
+                        binding.inputDescription.setText(craft.description);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
                 break;
         }
 
@@ -66,66 +83,51 @@ public class EditCraftActivity extends AppCompatActivity {
     }
 
     public void showDatePicker() {
-        MaterialDatePicker dateRangePicker =
+        MaterialDatePicker<Pair<Long, Long>> dateRangePicker =
                 MaterialDatePicker.Builder.dateRangePicker()
                         .setTitleText("Select dates")
                         .build();
 
         dateRangePicker.addOnPositiveButtonClickListener(selection -> {
-            Pair result = (Pair) selection;
-
             Calendar fromCal = Calendar.getInstance();
             Calendar toCal = Calendar.getInstance();
 
-            fromCal.setTimeInMillis((long) result.first);
-            toCal.setTimeInMillis((long) result.second);
+            fromCal.setTimeInMillis(selection.first);
+            toCal.setTimeInMillis(selection.second);
 
-            binding.craftDate.getEditText().setText(fromCal.getTime().toString());
+            binding.inputDate.setText(fromCal.getTime().toString());
         });
 
         dateRangePicker.show(getSupportFragmentManager(), "dateRangePicker");
     }
 
     public void submit(View view) {
-        String name = binding.inputName.getText().toString();
+        String name = Objects.requireNonNull(binding.inputName.getText()).toString();
         String store = binding.inputStore.getText().toString();
-        String date = binding.inputDate.getText().toString();
-        String description = binding.inputDescription.getText().toString();
+        String date = Objects.requireNonNull(binding.inputDate.getText()).toString();
+        String description = Objects.requireNonNull(binding.inputDescription.getText()).toString();
 
-        Craft craft = new Craft(name, store, date, description);
+        switch (mode) {
+            case Craft.addMode:
+                craft = new Craft(name, store, date, description);
+                break;
+            case Craft.editMode:
+                craft = new Craft(craft.id, name, store, date, description);
+                break;
+        }
 
         RequestQueue queue = Volley.newRequestQueue(this);
-Log.d("+++",craft.getJSONObject()+"");
+
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
-                "http://10.0.2.2:3001/dog/add",
-                craft.getJSONObject(),
+                String.format("http://10.0.2.2:3001/dog/%s", mode),
+                craft.getJSONObject(mode),
                 response -> {
                     try {
                         if (response.has("success") && response.getBoolean("success")) {
-
-
-//                            Intent intent = new Intent();
-//                            intent.putExtra("ACTION", "login");
-//                            setResult(RESULT_OK, intent);
-
-                            this.finish();
+                            finish();
                         } else {
-//                            String message = response.getString("message");
-
-//                            switch (response.getString("errorType")) {
-//                                case "email":
-//                                    email.setError(message);
-//                                    email.requestFocus();
-//                                    break;
-//                                case "password":
-//                                    password.setError(message);
-//                                    password.requestFocus();
-//                                    break;
-//                                default:
-//                                    Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-//                                    break;
-//                            }
+                            Toast.makeText(this, response.toString(), Toast.LENGTH_LONG).show();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
