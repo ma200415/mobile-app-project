@@ -42,11 +42,13 @@ public class MainActivity extends AppCompatActivity {
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        String localUrl = "http://10.0.2.2:3001";
+        String cloudUrl = "https://mobile-app-project-backend.vincentmichael.repl.co";
+
         SharedPreferences pref = this.getSharedPreferences("APIUrl", MODE_PRIVATE);
         pref.edit()
-                .putString("apiUrl", "https://mobile-app-project-backend.vincentmichael.repl.co")
+                .putString("apiUrl", cloudUrl)
                 .apply();
-        //http://10.0.2.2:3001/dog
 
         auth = new Auth(this);
 
