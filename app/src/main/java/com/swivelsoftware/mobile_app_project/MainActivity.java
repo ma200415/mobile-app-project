@@ -2,6 +2,7 @@ package com.swivelsoftware.mobile_app_project;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -40,6 +41,12 @@ public class MainActivity extends AppCompatActivity {
 
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        SharedPreferences pref = this.getSharedPreferences("APIUrl", MODE_PRIVATE);
+        pref.edit()
+                .putString("apiUrl", "https://mobile-app-project-backend.vincentmichael.repl.co")
+                .apply();
+        //http://10.0.2.2:3001/dog
 
         auth = new Auth(this);
 

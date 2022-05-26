@@ -1,19 +1,30 @@
 package com.swivelsoftware.mobile_app_project;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.swivelsoftware.mobile_app_project.classes.Auth;
 import com.swivelsoftware.mobile_app_project.classes.Craft;
@@ -27,10 +38,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class EditCraftActivity extends AppCompatActivity {
+public class EditCraftActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks, LocationListener {
     ActivityEditCraftBinding binding;
 
+    public static int REQUEST_LOCATION = 1;
+
     final String[] stores = new String[]{"Wong Tai Sin", "Tsuen Wan", "Causeway Bay", "Mong Kok"};
+
+    GoogleApiClient googleApiClient;
 
     Auth auth;
     Craft craft;
@@ -80,6 +96,8 @@ public class EditCraftActivity extends AppCompatActivity {
         }
 
         binding.craftDate.setEndIconOnClickListener(event -> showDatePicker());
+
+        location();
     }
 
     public void showDatePicker() {
@@ -120,7 +138,8 @@ public class EditCraftActivity extends AppCompatActivity {
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
-                String.format("http://10.0.2.2:3001/dog/%s", mode),
+                String.format("%s/dog/%s",this.getSharedPreferences("APIUrl", MODE_PRIVATE)
+                        .getString("apiUrl", ""), mode),
                 craft.getJSONObject(mode),
                 response -> {
                     try {
@@ -148,5 +167,49 @@ public class EditCraftActivity extends AppCompatActivity {
         };
 
         queue.add(jsonObjectRequest);
+    }
+
+    private void location() {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        }
+
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        Location location = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
+        Log.d("+++++",location+"");
+        if (location!=null){
+            Log.d("Lat",location.getLatitude()+"");
+            Log.d("Lon",location.getLongitude()+"");
+        }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.d("----",bundle+"");
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.d("----",i+"");
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d("----",connectionResult+"");
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+        Log.d("----",hasCapture+"");
+    }
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        Log.d("----",location+"");
     }
 }

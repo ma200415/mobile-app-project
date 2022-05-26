@@ -1,5 +1,7 @@
 package com.swivelsoftware.mobile_app_project.ui.home;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -74,7 +76,8 @@ public class HomeFragment extends Fragment {
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
                 Request.Method.POST,
-                "http://10.0.2.2:3001/dog",
+                root.getContext().getSharedPreferences("APIUrl", MODE_PRIVATE)
+                .getString("apiUrl", "")+"/dog",
                 null,
                 response -> {
                     if (response != null) {

@@ -39,7 +39,8 @@ public class LoginActivity extends AppCompatActivity {
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
-                "http://10.0.2.2:3001/signin",
+                this.getSharedPreferences("APIUrl", MODE_PRIVATE)
+                        .getString("apiUrl", "") + "/signin",
                 login.getJSONObject(),
                 response -> {
                     try {

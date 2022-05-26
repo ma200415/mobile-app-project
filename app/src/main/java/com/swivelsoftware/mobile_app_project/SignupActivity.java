@@ -39,7 +39,8 @@ public class SignupActivity extends AppCompatActivity {
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
-                "http://10.0.2.2:3001/signup",
+              this  .getSharedPreferences("APIUrl", MODE_PRIVATE)
+                .getString("apiUrl", "") + "/signup",
                 signup.getJSONObject(),
                 response -> {
                     try {
