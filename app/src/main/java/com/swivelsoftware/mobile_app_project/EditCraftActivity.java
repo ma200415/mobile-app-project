@@ -5,15 +5,12 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Pair;
 
@@ -22,10 +19,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationAvailability;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.swivelsoftware.mobile_app_project.classes.Auth;
@@ -36,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +42,7 @@ import java.util.Objects;
 public class EditCraftActivity extends AppCompatActivity {
     ActivityEditCraftBinding binding;
 
-    final String[] stores = new String[]{"Wong Tai Sin", "Tsuen Wan", "Causeway Bay", "Mong Kok"};
+    final String[] stores = {"Tsuen Wan", "Causeway Bay", "Mong Kok"};
 
     final int locationRequestCode = 1000;
 
@@ -57,8 +53,6 @@ public class EditCraftActivity extends AppCompatActivity {
     Craft craft;
 
     String mode;
-
-    private double wayLatitude = 0.0, wayLongitude = 0.0;
 
     Geocoder geocoder;
 
@@ -105,9 +99,6 @@ public class EditCraftActivity extends AppCompatActivity {
         }
 
         binding.craftDate.setEndIconOnClickListener(event -> showDatePicker());
-
-
-        setStoreLocation();
     }
 
     @Override
@@ -188,7 +179,7 @@ public class EditCraftActivity extends AppCompatActivity {
         queue.add(jsonObjectRequest);
     }
 
-    private void setStoreLocation() {
+    public void setLocation(View view) {
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, locationRequestCode);
@@ -197,50 +188,73 @@ public class EditCraftActivity extends AppCompatActivity {
 
             locationCallback =
                     new LocationCallback() {
-                        @Override
-                        public void onLocationResult(@NonNull LocationResult locationResult) {
-                            Location lastLocation = locationResult.getLastLocation();
-
-                            List<Address> addresses;
-
-                            geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
-
-                            try {
-                                addresses = geocoder.getFromLocation(
-                                        lastLocation.getLatitude(),
-                                        lastLocation.getLongitude(),
-                                        1);
-
-                                Address address = addresses.get(0);
-
-                                String addressLine = address.getAddressLine(0);
-
-                                String district = addressLine.split(", ")[1];
-
-                                Log.d("+++", district + "");
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                                Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-
-                            Log.d("-----", lastLocation + "");
-                        }
-
-                        @Override
-                        public void onLocationAvailability(@NonNull LocationAvailability availability) {
-                            if (!availability.isLocationAvailable()) {
-                                Log.d("++++++", availability + "");
-                                Toast.makeText(getBaseContext(), availability + "", Toast.LENGTH_SHORT).show();
-                            }
-                        }
+//                        @Override
+//                        public void onLocationResult(@NonNull LocationResult locationResult) {
+//                            Location lastLocation = locationResult.getLastLocation();
+//
+//                            List<Address> addresses;
+//
+//                            geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
+//
+//                            try {
+//                                addresses = geocoder.getFromLocation(
+//                                        lastLocation.getLatitude(),
+//                                        lastLocation.getLongitude(),
+//                                        1);
+//
+//                                Address address = addresses.get(0);
+//
+//                                String addressLine = address.getAddressLine(0);
+//
+//                                String district = addressLine.split(", ")[1];
+//
+//                                Log.d("+++", district + "");
+//
+//                                if (Arrays.asList(stores).contains(district)) {
+//                                    binding.inputStore.setText(district);
+//                                }
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                                Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+//                            }
+//
+//                            Log.d("-----", lastLocation + "");
+//                        }
+//
+//                        @Override
+//                        public void onLocationAvailability(@NonNull LocationAvailability availability) {
+//                            if (!availability.isLocationAvailable()) {
+//                                Log.d("++++++", availability + "");
+//                                Toast.makeText(getBaseContext(), availability + "", Toast.LENGTH_SHORT).show();
+//                            }
+//                        }
                     };
 
             mFusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
                 if (location != null) {
-                    wayLatitude = location.getLatitude();
-                    wayLongitude = location.getLongitude();
+                    List<Address> addresses;
 
-                    Log.d("-+-+-+-", wayLatitude + " " + wayLongitude);
+                    geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
+
+                    try {
+                        addresses = geocoder.getFromLocation(
+                                location.getLatitude(),
+                                location.getLongitude(),
+                                1);
+
+                        Address address = addresses.get(0);
+
+                        String addressLine = address.getAddressLine(0);
+
+                        String district = addressLine.split(", ")[1];
+
+                        if (Arrays.asList(stores).contains(district)) {
+                            binding.inputStore.setText(district);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
                 }
             });
 

@@ -38,23 +38,38 @@
             android:maxHeight="150dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/craft_store"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+    <LinearLayout
+        android:id="@+id/layout_store"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/store"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/craft_name">
 
-        <AutoCompleteTextView
-            android:id="@+id/input_store"
-            android:layout_width="match_parent"
-            android:labelFor="@id/craft_store"
-            android:layout_height="wrap_content"
-            android:inputType="none" />
-    </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/craft_store"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:hint="@string/store">
+
+            <AutoCompleteTextView
+                android:id="@+id/input_store"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="none"
+                android:labelFor="@id/input_store" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/location"
+            style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:onClick="setLocation"
+            app:icon="@drawable/ic_baseline_location_on_24"
+            app:iconSize="30dp" />
+    </LinearLayout>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/craft_date"
@@ -66,7 +81,7 @@
         app:endIconMode="custom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/craft_store">
+        app:layout_constraintTop_toBottomOf="@+id/layout_store">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/input_date"
