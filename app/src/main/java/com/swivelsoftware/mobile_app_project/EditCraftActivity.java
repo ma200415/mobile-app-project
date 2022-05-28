@@ -42,19 +42,17 @@ import java.util.Objects;
 public class EditCraftActivity extends AppCompatActivity {
     ActivityEditCraftBinding binding;
 
-    final String[] stores = {"Tsuen Wan", "Causeway Bay", "Mong Kok"};
+    static final String[] stores = {"Tsuen Wan", "Causeway Bay", "Mong Kok"};
 
-    final int locationRequestCode = 1000;
+    static final int REQUEST_LOCATION = 1000;
 
-    FusedLocationProviderClient mFusedLocationClient;
+    FusedLocationProviderClient fusedLocationClient;
     LocationCallback locationCallback;
 
     Auth auth;
     Craft craft;
 
     String mode;
-
-    Geocoder geocoder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,8 +103,8 @@ public class EditCraftActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
 
-        if (mFusedLocationClient != null) {
-            mFusedLocationClient.removeLocationUpdates(locationCallback);
+        if (fusedLocationClient != null) {
+            fusedLocationClient.removeLocationUpdates(locationCallback);
         }
     }
 
@@ -182,9 +180,9 @@ public class EditCraftActivity extends AppCompatActivity {
     public void setLocation(View view) {
         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, locationRequestCode);
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
         } else {
-            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
             locationCallback =
                     new LocationCallback() {
@@ -230,11 +228,11 @@ public class EditCraftActivity extends AppCompatActivity {
 //                        }
                     };
 
-            mFusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+            fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
                 if (location != null) {
                     List<Address> addresses;
 
-                    geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
+                    Geocoder geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
 
                     try {
                         addresses = geocoder.getFromLocation(
@@ -258,7 +256,7 @@ public class EditCraftActivity extends AppCompatActivity {
                 }
             });
 
-            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
             LocationRequest locationRequest = LocationRequest.create()
                     .setMaxWaitTime(5000)
@@ -266,7 +264,12 @@ public class EditCraftActivity extends AppCompatActivity {
                     .setFastestInterval(5000)
                     .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-            mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
         }
+    }
+
+    public void takePhoto(View view) {
+        Intent intent = new Intent(this, KtActivity.class);
+        startActivity(intent);
     }
 }

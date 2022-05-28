@@ -25,6 +25,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_input_field_margin"
         android:hint="@string/name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,12 +39,26 @@
             android:maxHeight="150dp" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/take_photo"
+        style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_input_field_margin"
+        app:icon="@drawable/ic_baseline_photo_camera_24"
+        app:iconSize="30dp"
+        android:onClick="takePhoto"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/craft_name" />
+
     <LinearLayout
         android:id="@+id/layout_store"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_input_field_margin"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/craft_name">
+        app:layout_constraintTop_toBottomOf="@+id/take_photo">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/craft_store"
@@ -76,6 +91,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_input_field_margin"
         android:hint="@string/date"
         app:endIconDrawable="@drawable/ic_baseline_date_range_24"
         app:endIconMode="custom"
@@ -94,6 +110,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_input_field_margin"
         android:hint="@string/description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -111,7 +128,7 @@
         android:id="@+id/craft_submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
         android:onClick="submit"
         android:text="@string/submit"
         app:layout_constraintEnd_toEndOf="parent"
