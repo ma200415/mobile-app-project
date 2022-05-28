@@ -1,19 +1,20 @@
 package com.swivelsoftware.mobile_app_project;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.util.Pair;
 
 import com.android.volley.Request;
@@ -34,23 +35,32 @@ import com.swivelsoftware.mobile_app_project.databinding.ActivityEditCraftBindin
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
 public class EditCraftActivity extends AppCompatActivity {
     ActivityEditCraftBinding binding;
 
-    final String[] stores = new String[]{};
+    final String[] stores = new String[]{"Wong Tai Sin", "Tsuen Wan", "Causeway Bay", "Mong Kok"};
+
+    final int locationRequestCode = 1000;
+
+    FusedLocationProviderClient mFusedLocationClient;
+    LocationCallback locationCallback;
 
     Auth auth;
     Craft craft;
 
     String mode;
 
-    private final int locationRequestCode = 1000;
     private double wayLatitude = 0.0, wayLongitude = 0.0;
+
+    Geocoder geocoder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,63 +106,17 @@ public class EditCraftActivity extends AppCompatActivity {
 
         binding.craftDate.setEndIconOnClickListener(event -> showDatePicker());
 
-        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},
-                    locationRequestCode);
+        setStoreLocation();
+    }
 
-        } else {
-            mFusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
-                if (location != null) {
-                    wayLatitude = location.getLatitude();
-                    wayLongitude = location.getLongitude();
+    @Override
+    public void onPause() {
+        super.onPause();
 
-                    Toast.makeText(this, wayLatitude + " : " + wayLongitude, Toast.LENGTH_LONG).show();
-                }
-            });
+        if (mFusedLocationClient != null) {
+            mFusedLocationClient.removeLocationUpdates(locationCallback);
         }
-
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        boolean networkEnabled = false;
-
-        try {
-            networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch (Exception ex) {
-        }
-        LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setMaxWaitTime(5000);
-        locationRequest.setInterval(10000);
-        locationRequest.setFastestInterval(5000);
-        int priority = LocationRequest.PRIORITY_HIGH_ACCURACY;
-        locationRequest.setPriority(priority);
-        LocationCallback locationCallback =
-                new LocationCallback() {
-                    @Override
-                    public void onLocationResult(LocationResult locationResult) {
-                        Location lastLocation = locationResult.getLastLocation();
-                        if (lastLocation == null) {
-                            Log.d("-----", lastLocation + "");
-                            Toast.makeText(getBaseContext(), lastLocation+"", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.d("-----", lastLocation + "");
-                            Toast.makeText(getBaseContext(), lastLocation+"", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onLocationAvailability(LocationAvailability availability) {
-                        if (!availability.isLocationAvailable()) {
-                            Log.d("++++++", availability + "");
-                            Toast.makeText(getBaseContext(), availability+"", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                };
-
-        mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
 
     public void showDatePicker() {
@@ -224,32 +188,71 @@ public class EditCraftActivity extends AppCompatActivity {
         queue.add(jsonObjectRequest);
     }
 
-    private void location() {
-//        if (
-//                ActivityCompat.checkSelfPermission(
-//                        this,
-//                        android.Manifest.permission.ACCESS_COARSE_LOCATION
-//                ) == PackageManager.PERMISSION_GRANTED ||
-//                        ActivityCompat.checkSelfPermission(
-//                                this,
-//                                android.Manifest.permission.ACCESS_FINE_LOCATION
-//                        ) == PackageManager.PERMISSION_GRANTED
-//        ) {
-//            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,
-//                    Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-//        }
-//
-//        fusedLocationClient.getLastLocation()
-//                .addOnSuccessListener(this, location -> {
-//                    if (location != null) {
-//                        // Logic to handle location object
-//                        Toast.makeText(this, location.getLongitude() + " : " + location.getLatitude(), Toast.LENGTH_LONG).show();
-//                        Log.d("----", location.getLongitude() + "");
-//                        Log.d("----", location.getLatitude() + "");
-//                    }
-//                });
+    private void setStoreLocation() {
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, locationRequestCode);
+        } else {
+            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
+            locationCallback =
+                    new LocationCallback() {
+                        @Override
+                        public void onLocationResult(@NonNull LocationResult locationResult) {
+                            Location lastLocation = locationResult.getLastLocation();
+
+                            List<Address> addresses;
+
+                            geocoder = new Geocoder(getBaseContext(), Locale.getDefault());
+
+                            try {
+                                addresses = geocoder.getFromLocation(
+                                        lastLocation.getLatitude(),
+                                        lastLocation.getLongitude(),
+                                        1);
+
+                                Address address = addresses.get(0);
+
+                                String addressLine = address.getAddressLine(0);
+
+                                String district = addressLine.split(", ")[1];
+
+                                Log.d("+++", district + "");
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                                Toast.makeText(getBaseContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+
+                            Log.d("-----", lastLocation + "");
+                        }
+
+                        @Override
+                        public void onLocationAvailability(@NonNull LocationAvailability availability) {
+                            if (!availability.isLocationAvailable()) {
+                                Log.d("++++++", availability + "");
+                                Toast.makeText(getBaseContext(), availability + "", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    };
+
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+                if (location != null) {
+                    wayLatitude = location.getLatitude();
+                    wayLongitude = location.getLongitude();
+
+                    Log.d("-+-+-+-", wayLatitude + " " + wayLongitude);
+                }
+            });
+
+            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+            LocationRequest locationRequest = LocationRequest.create()
+                    .setMaxWaitTime(5000)
+                    .setInterval(10000)
+                    .setFastestInterval(5000)
+                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+            mFusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.myLooper());
+        }
     }
-
-
 }
