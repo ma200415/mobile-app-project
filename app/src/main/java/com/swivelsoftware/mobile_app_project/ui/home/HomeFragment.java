@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,41 +61,39 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        craftCard();
+        setCraftCard();
     }
 
-    private void craftCard() {
+    private void setCraftCard() {
         String role = auth.getUserString(Auth.roleKey);
 
-        LinearLayout craft_card_layout = binding.craftCardLayout;
-
-        craft_card_layout.removeAllViews();
+        binding.craftCardLayout.removeAllViews();
 
         RequestQueue queue = Volley.newRequestQueue(root.getContext());
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
                 Request.Method.POST,
                 root.getContext().getSharedPreferences("APIUrl", MODE_PRIVATE)
-                .getString("apiUrl", "")+"/dog",
+                        .getString("apiUrl", "") + "/dog",
                 null,
                 response -> {
                     if (response != null) {
                         for (int i = 0; i < response.length(); i++) {
-                            View to_add = _inflater.inflate(R.layout.craft_card, craft_card_layout, false);
+                            View craftCardView = _inflater.inflate(R.layout.craft_card, binding.craftCardLayout, false);
 
                             try {
                                 JSONObject jsonObject = response.getJSONObject(i);
 
                                 Craft craft = new Craft(jsonObject);
 
-                                TextView titleView = to_add.findViewById(R.id.craft_card_title);
-                                TextView contentView = to_add.findViewById(R.id.craft_card_content);
+                                TextView titleView = craftCardView.findViewById(R.id.craft_card_title);
+                                TextView contentView = craftCardView.findViewById(R.id.craft_card_content);
 
-                                MaterialButton booking = to_add.findViewById(R.id.booking);
-                                MaterialButton edit = to_add.findViewById(R.id.edit);
-                                MaterialButton delete = to_add.findViewById(R.id.delete);
-                                MaterialButton message = to_add.findViewById(R.id.message);
-                                MaterialButton bookmark = to_add.findViewById(R.id.bookmark);
+                                MaterialButton booking = craftCardView.findViewById(R.id.booking);
+                                MaterialButton edit = craftCardView.findViewById(R.id.edit);
+                                MaterialButton delete = craftCardView.findViewById(R.id.delete);
+                                MaterialButton message = craftCardView.findViewById(R.id.message);
+                                MaterialButton bookmark = craftCardView.findViewById(R.id.bookmark);
 
                                 edit.setOnClickListener(l -> {
                                     Intent intent = new Intent(root.getContext(), EditCraftActivity.class);
@@ -131,7 +128,7 @@ public class HomeFragment extends Fragment {
                                 e.printStackTrace();
                             }
 
-                            craft_card_layout.addView(to_add);
+                            binding.craftCardLayout.addView(craftCardView);
                         }
                     }
                 },

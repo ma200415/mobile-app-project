@@ -1,16 +1,21 @@
 package com.swivelsoftware.mobile_app_project;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Pair;
 
@@ -30,7 +35,9 @@ import com.swivelsoftware.mobile_app_project.databinding.ActivityEditCraftBindin
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -53,6 +60,8 @@ public class EditCraftActivity extends AppCompatActivity {
     Craft craft;
 
     String mode;
+
+    ActivityResultLauncher<Intent> mainActivityResultLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +106,26 @@ public class EditCraftActivity extends AppCompatActivity {
         }
 
         binding.craftDate.setEndIconOnClickListener(event -> showDatePicker());
+
+        mainActivityResultLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+
+                        if (data != null) {
+                            Uri imageUrl = data.getParcelableExtra("IMAGE_URL");
+
+                            try {
+                                InputStream ims = getContentResolver().openInputStream(imageUrl);
+                                binding.imagePreview.setImageBitmap(BitmapFactory.decodeStream(ims));
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }
+                });
     }
 
     @Override
@@ -268,8 +297,8 @@ public class EditCraftActivity extends AppCompatActivity {
         }
     }
 
-    public void takePhoto(View view) {
-        Intent intent = new Intent(this, KtActivity.class);
-        startActivity(intent);
+    public void startTakePhoto(View view) {
+        Intent intent = new Intent(this, CameraActivity.class);
+        mainActivityResultLauncher.launch(intent);
     }
 }
