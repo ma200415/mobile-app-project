@@ -4,12 +4,15 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -35,6 +38,7 @@ import com.swivelsoftware.mobile_app_project.databinding.ActivityEditCraftBindin
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,6 +66,8 @@ public class EditCraftActivity extends AppCompatActivity {
     String mode;
 
     ActivityResultLauncher<Intent> mainActivityResultLauncher;
+
+    Bitmap craftPhotoBitmap = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +124,10 @@ public class EditCraftActivity extends AppCompatActivity {
 
                             try {
                                 InputStream ims = getContentResolver().openInputStream(imageUrl);
-                                binding.imagePreview.setImageBitmap(BitmapFactory.decodeStream(ims));
+
+                                craftPhotoBitmap = BitmapFactory.decodeStream(ims);
+
+                                binding.imagePreview.setImageBitmap(craftPhotoBitmap);
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
                                 Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -161,16 +170,24 @@ public class EditCraftActivity extends AppCompatActivity {
         String store = binding.inputStore.getText().toString();
         String date = Objects.requireNonNull(binding.inputDate.getText()).toString();
         String description = Objects.requireNonNull(binding.inputDescription.getText()).toString();
+        String photo = "";
+
+        if (craftPhotoBitmap != null) {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            craftPhotoBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            byte[] imageBytes = stream.toByteArray();
+            photo = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        }
 
         switch (mode) {
             case Craft.addMode:
-                craft = new Craft(name, store, date, description);
+                craft = new Craft(name, store, date, description, photo);
                 break;
             case Craft.editMode:
-                craft = new Craft(craft.id, name, store, date, description);
+                craft = new Craft(craft.id, name, store, date, description, photo);
                 break;
         }
-
+        Log.d("++++", craft.getJSONObject(mode) + "");
         RequestQueue queue = Volley.newRequestQueue(this);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
