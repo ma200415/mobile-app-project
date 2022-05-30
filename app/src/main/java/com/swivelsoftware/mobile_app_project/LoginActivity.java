@@ -14,6 +14,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.swivelsoftware.mobile_app_project.classes.Auth;
 import com.swivelsoftware.mobile_app_project.classes.Login;
+import com.swivelsoftware.mobile_app_project.classes.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,8 +40,7 @@ public class LoginActivity extends AppCompatActivity {
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
-                this.getSharedPreferences("APIUrl", MODE_PRIVATE)
-                        .getString("apiUrl", "") + "/signin",
+                Utils.getBaseUrl(this) + "/signin",
                 login.getJSONObject(),
                 response -> {
                     try {

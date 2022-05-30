@@ -12,6 +12,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.swivelsoftware.mobile_app_project.classes.Signup;
+import com.swivelsoftware.mobile_app_project.classes.Utils;
 
 import org.json.JSONException;
 
@@ -39,8 +40,7 @@ public class SignupActivity extends AppCompatActivity {
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
-              this  .getSharedPreferences("APIUrl", MODE_PRIVATE)
-                .getString("apiUrl", "") + "/signup",
+                Utils.getBaseUrl(this) + "/signup",
                 signup.getJSONObject(),
                 response -> {
                     try {

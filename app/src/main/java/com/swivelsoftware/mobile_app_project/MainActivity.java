@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,7 +21,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
 import com.swivelsoftware.mobile_app_project.classes.Auth;
 import com.swivelsoftware.mobile_app_project.classes.Craft;
 import com.swivelsoftware.mobile_app_project.databinding.ActivityMainBinding;
@@ -51,14 +49,15 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences pref = this.getSharedPreferences("APIUrl", MODE_PRIVATE);
         pref.edit()
-                .putString("apiUrl", cloudUrl)
+                .putString("apiUrl", localUrl)
                 .apply();
 
         auth = new Auth(this);
 
         setSupportActionBar(binding.appBarMain.toolbar);
-        binding.appBarMain.fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
+
+        binding.appBarMain.fab.setOnClickListener(view -> startCraft(Craft.addMode));
+
         DrawerLayout drawer = binding.drawerLayout;
         navigationView = binding.navView;
 
@@ -131,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
         auth.verifyAuthToken(result -> {
             try {
-        if (authToken == null || authToken.equals("")) {
+                if (authToken == null || authToken.equals("")) {
                     setGuestHeader(userName, userEmail, accountAction);
                 } else {
                     if (result.has("errorType")) {
@@ -151,18 +150,18 @@ public class MainActivity extends AppCompatActivity {
     private void setGuestHeader(TextView userName, TextView userEmail, Button accountAction) {
         auth.setAuthToken("");
 
-            userName.setText(getString(R.string.welcome));
-            userEmail.setText("");
-            accountAction.setText(getString(R.string.action_login));
-            accountAction.setOnClickListener(v -> goSignin());
+        userName.setText(getString(R.string.welcome));
+        userEmail.setText("");
+        accountAction.setText(getString(R.string.action_login));
+        accountAction.setOnClickListener(v -> goSignin());
     }
 
     private void setLoginHeader(TextView userName, TextView userEmail, Button accountAction) {
-            userName.setText(String.format("%s %s", auth.getUserString(Auth.lastNameKey), auth.getUserString(Auth.firstNameKey)));
-            userEmail.setText(String.format("%s", auth.getUserString(Auth.emailKey)));
-            accountAction.setText(getString(R.string.action_logout));
-            accountAction.setOnClickListener(v -> logout());
-        }
+        userName.setText(String.format("%s %s", auth.getUserString(Auth.lastNameKey), auth.getUserString(Auth.firstNameKey)));
+        userEmail.setText(String.format("%s", auth.getUserString(Auth.emailKey)));
+        accountAction.setText(getString(R.string.action_logout));
+        accountAction.setOnClickListener(v -> logout());
+    }
 
     public void goEditCraft(View view) {
         View v = view.getRootView();
@@ -170,7 +169,6 @@ public class MainActivity extends AppCompatActivity {
         TextView title = v.findViewById(R.id.craft_card_title);
         TextView content = v.findViewById(R.id.craft_card_content);
 
-        Log.d("+-+-+-+-", content.getText().toString() + "");
         startCraft(Craft.editMode);
     }
 

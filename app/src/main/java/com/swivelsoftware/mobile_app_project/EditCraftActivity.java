@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -33,6 +32,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.material.datepicker.MaterialDatePicker;
 import com.swivelsoftware.mobile_app_project.classes.Auth;
 import com.swivelsoftware.mobile_app_project.classes.Craft;
+import com.swivelsoftware.mobile_app_project.classes.Utils;
 import com.swivelsoftware.mobile_app_project.databinding.ActivityEditCraftBinding;
 
 import org.json.JSONException;
@@ -192,8 +192,7 @@ public class EditCraftActivity extends AppCompatActivity {
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
-                String.format("%s/dog/%s", this.getSharedPreferences("APIUrl", MODE_PRIVATE)
-                        .getString("apiUrl", ""), mode),
+                String.format("%s/dog/%s", Utils.getBaseUrl(this), mode),
                 craft.getJSONObject(mode),
                 response -> {
                     try {

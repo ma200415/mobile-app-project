@@ -1,13 +1,10 @@
 package com.swivelsoftware.mobile_app_project.ui.home;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,16 +19,21 @@ import androidx.lifecycle.ViewModelProvider;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.button.MaterialButton;
 import com.swivelsoftware.mobile_app_project.EditCraftActivity;
 import com.swivelsoftware.mobile_app_project.R;
 import com.swivelsoftware.mobile_app_project.classes.Auth;
 import com.swivelsoftware.mobile_app_project.classes.Craft;
+import com.swivelsoftware.mobile_app_project.classes.Utils;
 import com.swivelsoftware.mobile_app_project.databinding.FragmentHomeBinding;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
@@ -78,8 +80,7 @@ public class HomeFragment extends Fragment {
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
                 Request.Method.POST,
-                root.getContext().getSharedPreferences("APIUrl", MODE_PRIVATE)
-                        .getString("apiUrl", "") + "/dog",
+                Utils.getBaseUrl(root.getContext()) + "/dog",
                 null,
                 response -> {
                     if (response != null) {
@@ -111,7 +112,7 @@ public class HomeFragment extends Fragment {
                                 });
 
                                 delete.setOnClickListener(l -> {
-                                    deleteCraft();
+                                    deleteCraft(craft.id);
                                 });
 
                                 if (!craft.photo.isEmpty()) {
@@ -164,7 +165,41 @@ public class HomeFragment extends Fragment {
         binding = null;
     }
 
-    private void deleteCraft() {
+    private void deleteCraft(String id) {
+        JSONObject requestJson = new JSONObject();
 
+        try {
+            requestJson.put("craftId", id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(root.getContext());
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                Utils.getBaseUrl(root.getContext()) + "/dog/delete",
+                requestJson,
+                response -> {
+                    if (response != null) {
+                        setCraftCard();
+
+                        Toast.makeText(root.getContext(), "Deleted", Toast.LENGTH_LONG).show();
+                    }
+                },
+                error -> {
+                    error.printStackTrace();
+                    Toast.makeText(root.getContext(), error.toString(), Toast.LENGTH_LONG).show();
+                }
+        ) {
+            @Override
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+                headers.put("authorization", String.format("Bearer %s", auth.getUserString(Auth.authTokenKey)));
+                return headers;
+            }
+        };
+
+        queue.add(jsonObjectRequest);
     }
 }

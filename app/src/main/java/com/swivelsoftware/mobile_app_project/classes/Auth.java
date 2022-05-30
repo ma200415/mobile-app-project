@@ -69,8 +69,7 @@ public class Auth {
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
-                context.getSharedPreferences("APIUrl", MODE_PRIVATE)
-                        .getString("apiUrl", "") + "/auth",
+                Utils.getBaseUrl(context) + "/auth",
                 null,
                 callback::onSuccess,
                 error -> {
