@@ -174,7 +174,7 @@ public class EditCraftActivity extends AppCompatActivity {
 
         if (craftPhotoBitmap != null) {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            craftPhotoBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            craftPhotoBitmap.compress(Bitmap.CompressFormat.JPEG, 60, stream);
             byte[] imageBytes = stream.toByteArray();
             photo = Base64.encodeToString(imageBytes, Base64.DEFAULT);
         }
@@ -187,7 +187,7 @@ public class EditCraftActivity extends AppCompatActivity {
                 craft = new Craft(craft.id, name, store, date, description, photo);
                 break;
         }
-        Log.d("++++", craft.getJSONObject(mode) + "");
+
         RequestQueue queue = Volley.newRequestQueue(this);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(

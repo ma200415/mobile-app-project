@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -25,6 +26,9 @@ import com.google.android.material.snackbar.Snackbar;
 import com.swivelsoftware.mobile_app_project.classes.Auth;
 import com.swivelsoftware.mobile_app_project.classes.Craft;
 import com.swivelsoftware.mobile_app_project.databinding.ActivityMainBinding;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
@@ -112,6 +116,10 @@ public class MainActivity extends AppCompatActivity {
         setHeader();
     }
 
+    public interface VolleyCallback {
+        void onSuccess(JSONObject result);
+    }
+
     public void setHeader() {
         View headerView = navigationView.getHeaderView(0);
 
@@ -121,18 +129,40 @@ public class MainActivity extends AppCompatActivity {
 
         String authToken = auth.getUserString(Auth.authTokenKey);
 
+        auth.verifyAuthToken(result -> {
+            try {
         if (authToken == null || authToken.equals("")) {
+                    setGuestHeader(userName, userEmail, accountAction);
+                } else {
+                    if (result.has("errorType")) {
+                        setGuestHeader(userName, userEmail, accountAction);
+
+                        Toast.makeText(this, result.getString("message"), Toast.LENGTH_LONG).show();
+                    } else {
+                        setLoginHeader(userName, userEmail, accountAction);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void setGuestHeader(TextView userName, TextView userEmail, Button accountAction) {
+        auth.setAuthToken("");
+
             userName.setText(getString(R.string.welcome));
             userEmail.setText("");
             accountAction.setText(getString(R.string.action_login));
             accountAction.setOnClickListener(v -> goSignin());
-        } else {
+    }
+
+    private void setLoginHeader(TextView userName, TextView userEmail, Button accountAction) {
             userName.setText(String.format("%s %s", auth.getUserString(Auth.lastNameKey), auth.getUserString(Auth.firstNameKey)));
             userEmail.setText(String.format("%s", auth.getUserString(Auth.emailKey)));
             accountAction.setText(getString(R.string.action_logout));
             accountAction.setOnClickListener(v -> logout());
         }
-    }
 
     public void goEditCraft(View view) {
         View v = view.getRootView();

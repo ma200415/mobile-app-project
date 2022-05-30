@@ -3,10 +3,15 @@ package com.swivelsoftware.mobile_app_project.ui.home;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -86,6 +91,8 @@ public class HomeFragment extends Fragment {
 
                                 Craft craft = new Craft(jsonObject);
 
+                                ImageView photoView = craftCardView.findViewById(R.id.craft_card_photo);
+
                                 TextView titleView = craftCardView.findViewById(R.id.craft_card_title);
                                 TextView contentView = craftCardView.findViewById(R.id.craft_card_content);
 
@@ -102,6 +109,16 @@ public class HomeFragment extends Fragment {
 
                                     startActivity(intent);
                                 });
+
+                                delete.setOnClickListener(l -> {
+                                    deleteCraft();
+                                });
+
+                                if (!craft.photo.isEmpty()) {
+                                    byte[] decodedString = Base64.decode(craft.photo, Base64.DEFAULT);
+                                    Bitmap photo = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                                    photoView.setImageBitmap(photo);
+                                }
 
                                 String content = String.format("%s: %s\n" +
                                                 "%s: %s\n" +
@@ -145,5 +162,9 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void deleteCraft() {
+
     }
 }

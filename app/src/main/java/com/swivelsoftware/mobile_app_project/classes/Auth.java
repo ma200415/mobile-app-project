@@ -10,6 +10,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.swivelsoftware.mobile_app_project.MainActivity;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +64,7 @@ public class Auth {
                 .getBoolean(key, false);
     }
 
-    public boolean verifyAuthToken() {
+    public void verifyAuthToken(final MainActivity.VolleyCallback callback) {
         RequestQueue queue = Volley.newRequestQueue(context);
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
@@ -71,9 +72,7 @@ public class Auth {
                 context.getSharedPreferences("APIUrl", MODE_PRIVATE)
                         .getString("apiUrl", "") + "/auth",
                 null,
-                response -> {
-                    Toast.makeText(context, response.toString(), Toast.LENGTH_LONG).show();
-                },
+                callback::onSuccess,
                 error -> {
                     error.printStackTrace();
                     Toast.makeText(context, error.toString(), Toast.LENGTH_LONG).show();
@@ -88,7 +87,5 @@ public class Auth {
         };
 
         queue.add(jsonObjectRequest);
-
-        return false;
     }
 }
