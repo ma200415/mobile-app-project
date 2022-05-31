@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.util.Base64;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -95,13 +96,7 @@ public class Craft {
         return jsonObject;
     }
 
-    public static void setCraftCard(Context context, int code, LinearLayout craftCardLayout, View craftCardView) {
-        Auth auth = new Auth(context);
-
-        String role = auth.getUserString(Auth.roleKey);
-
-        craftCardLayout.removeAllViews();
-
+    public static void setCraftCard(Context context, int code, LinearLayout craftCardLayout, LayoutInflater inflater) {
         RequestQueue queue = Volley.newRequestQueue(context);
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
@@ -110,6 +105,10 @@ public class Craft {
                 null,
                 response -> {
                     if (response != null) {
+                        Auth auth = new Auth(context);
+
+                        String role = auth.getUserString(Auth.roleKey);
+
                         auth.queryUser(result -> {
                             ArrayList<String> bookmarkList = new ArrayList<>();
 
@@ -125,11 +124,25 @@ public class Craft {
                                 }
                             }
 
+                            craftCardLayout.removeAllViews();
+
+                            if (code != BOOKMARK_CODE) {
+                                View welcomeCard = inflater.inflate(R.layout.welcome_card, craftCardLayout, false);
+
+                                craftCardLayout.addView(welcomeCard);
+                            }
+
                             for (int i = 0; i < response.length(); i++) {
                                 try {
                                     JSONObject jsonObject = response.getJSONObject(i);
 
                                     Craft craft = new Craft(jsonObject);
+
+                                    if (!bookmarkList.contains(craft.id) && code == BOOKMARK_CODE) {
+                                        continue;
+                                    }
+
+                                    View craftCardView = inflater.inflate(R.layout.craft_card, craftCardLayout, false);
 
                                     ImageView photoView = craftCardView.findViewById(R.id.craft_card_photo);
 
@@ -150,14 +163,14 @@ public class Craft {
                                         context.startActivity(intent);
                                     });
 
-                                    delete.setOnClickListener(v -> deleteCraft(context, craft.id, auth, code, craftCardLayout, craftCardView));
+                                    delete.setOnClickListener(v -> deleteCraft(context, craft.id, auth, code, craftCardLayout, inflater));
 
                                     if (bookmarkList.contains(craft.id)) {
                                         bookmark.setOnClickListener(v -> bookmarkCraft(context, (MaterialButton) v, craft.id, auth, UNBOOKMARK));
                                         bookmark.setIcon(AppCompatResources.getDrawable(context, R.drawable.ic_baseline_bookmark_added_24));
                                     } else {
                                         bookmark.setOnClickListener(v -> bookmarkCraft(context, (MaterialButton) v, craft.id, auth, BOOKMARK));
-                                        bookmark.setIcon(AppCompatResources.getDrawable(context, R.drawable.ic_baseline_bookmark_24));
+                                        bookmark.setIcon(AppCompatResources.getDrawable(context, R.drawable.ic_baseline_bookmark_add_24));
                                     }
 
                                     if (!craft.photo.isEmpty()) {
@@ -187,11 +200,11 @@ public class Craft {
 //                edit.setVisibility(View.GONE);
 //                delete.setVisibility(View.GONE);
                                     }
+
+                                    craftCardLayout.addView(craftCardView);
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-
-                                craftCardLayout.addView(craftCardView);
                             }
                         });
                     }
@@ -205,7 +218,7 @@ public class Craft {
         queue.add(jsonObjectRequest);
     }
 
-    private static void deleteCraft(Context context, String id, Auth auth, int code, LinearLayout craftCardLayout, View craftCardView) {
+    private static void deleteCraft(Context context, String id, Auth auth, int code, LinearLayout craftCardLayout, LayoutInflater inflater) {
         JSONObject requestJson = new JSONObject();
 
         try {
@@ -222,7 +235,7 @@ public class Craft {
                 requestJson,
                 response -> {
                     if (response != null) {
-                        Craft.setCraftCard(context, code, craftCardLayout, craftCardView);
+                        Craft.setCraftCard(context, code, craftCardLayout, inflater);
 
                         Toast.makeText(context, "Deleted", Toast.LENGTH_LONG).show();
                     }
