@@ -36,7 +36,7 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="194dp"
-                        android:contentDescription="TODO"
+                        android:contentDescription="@string/craft_photo_preview"
                         android:scaleType="centerCrop"
                         app:srcCompat="@drawable/ic_menu_camera" />
 

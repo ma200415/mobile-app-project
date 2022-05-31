@@ -12,6 +12,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.swivelsoftware.mobile_app_project.MainActivity;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,6 +87,31 @@ public class Auth {
                 return headers;
             }
         };
+
+        queue.add(jsonObjectRequest);
+    }
+
+    public void queryUser(final MainActivity.VolleyCallback callback) {
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put("id", getUserString(userIDKey));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                Utils.getBaseUrl(context) + "/user/id",
+                jsonObject,
+                callback::onSuccess,
+                error -> {
+                    error.printStackTrace();
+                    Toast.makeText(context, error.toString(), Toast.LENGTH_LONG).show();
+                }
+        );
 
         queue.add(jsonObjectRequest);
     }

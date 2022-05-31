@@ -1,4 +1,4 @@
-package com.swivelsoftware.mobile_app_project.ui.home;
+package com.swivelsoftware.mobile_app_project.ui.bookmark;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,29 +12,24 @@ import com.swivelsoftware.mobile_app_project.R;
 import com.swivelsoftware.mobile_app_project.classes.Craft;
 import com.swivelsoftware.mobile_app_project.databinding.FragmentHomeBinding;
 
-public class HomeFragment extends Fragment {
+public class BookmarkFragment extends Fragment {
     private FragmentHomeBinding binding;
 
-    View root, craftCardView;
-
     LayoutInflater _inflater;
+
+    View craftCardView;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         _inflater = inflater;
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
-        root = binding.getRoot();
+        View root = binding.getRoot();
 
         craftCardView = _inflater.inflate(R.layout.craft_card, binding.craftCardLayout, false);
 
+        Craft.setCraftCard(root.getContext(), Craft.BOOKMARK_CODE, binding.craftCardLayout, craftCardView);
+
         return root;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        Craft.setCraftCard(root.getContext(), Craft.HOME_CODE, binding.craftCardLayout, craftCardView);
     }
 
     @Override

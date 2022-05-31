@@ -3,7 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/drawable/ic_baseline_bookmark_add_24.xml" value="0.3776041666666667" />
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/drawable/ic_baseline_message_24.xml" value="0.21875" />
+        <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/drawable/ic_menu_slideshow.xml" value="0.3776041666666667" />
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/activity_edit_craft.xml" value="0.3614583333333333" />
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/activity_kt.xml" value="0.2871376811594203" />
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/activity_login.xml" value="0.31431159420289856" />
@@ -13,6 +15,8 @@
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/camera.xml" value="0.1757852077001013" />
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/craft_card.xml" value="0.16666666666666666" />
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/craft_store_list_item.xml" value="0.1" />
+        <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/fragment_bookmark.xml" value="0.35280797101449274" />
+        <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/fragment_favourite.xml" value="0.18385416666666668" />
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/fragment_home.xml" value="0.358695652173913" />
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/fragment_slideshow.xml" value="0.358695652173913" />
         <entry key="..\:/Users/John/Desktop/W/mobile-app-project/app/src/main/res/layout/nav_header_main.xml" value="0.31023550724637683" />

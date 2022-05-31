@@ -56,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.appBarMain.toolbar);
 
-        binding.appBarMain.fab.setOnClickListener(view -> startCraft(Craft.addMode));
-
         DrawerLayout drawer = binding.drawerLayout;
         navigationView = binding.navView;
 
