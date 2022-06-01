@@ -214,7 +214,7 @@ public class EditCraftActivity extends AppCompatActivity {
             @Override
             public Map<String, String> getHeaders() {
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("authorization", String.format("Bearer %s", auth.getUserString(Auth.authTokenKey)));
+                headers.put("authorization", String.format("Bearer %s", auth.getUserString(Auth.AUTH_TOKEN_KEY)));
                 return headers;
             }
         };

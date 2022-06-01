@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences pref = this.getSharedPreferences("APIUrl", MODE_PRIVATE);
         pref.edit()
-                .putString("apiUrl", localUrl)
+                .putString("apiUrl", cloudUrl)
                 .apply();
 
         auth = new Auth(this);
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_home, R.id.nav_admin, R.id.nav_bookmark)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         TextView userEmail = headerView.findViewById(R.id.userEmail);
         Button accountAction = headerView.findViewById(R.id.accountAction);
 
-        String authToken = auth.getUserString(Auth.authTokenKey);
+        String authToken = auth.getUserString(Auth.AUTH_TOKEN_KEY);
 
         auth.verifyAuthToken(result -> {
             try {
@@ -155,8 +155,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setLoginHeader(TextView userName, TextView userEmail, Button accountAction) {
-        userName.setText(String.format("%s %s", auth.getUserString(Auth.lastNameKey), auth.getUserString(Auth.firstNameKey)));
-        userEmail.setText(String.format("%s", auth.getUserString(Auth.emailKey)));
+        userName.setText(String.format("%s %s", auth.getUserString(Auth.LASTNAME_KEY), auth.getUserString(Auth.FIRSTNAME_KEY)));
+        userEmail.setText(String.format("%s", auth.getUserString(Auth.EMAIL_KEY)));
         accountAction.setText(getString(R.string.action_logout));
         accountAction.setOnClickListener(v -> logout());
     }

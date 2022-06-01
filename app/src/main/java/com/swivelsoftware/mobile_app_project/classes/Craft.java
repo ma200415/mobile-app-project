@@ -22,6 +22,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.button.MaterialButton;
 import com.swivelsoftware.mobile_app_project.EditCraftActivity;
+import com.swivelsoftware.mobile_app_project.MainActivity;
 import com.swivelsoftware.mobile_app_project.R;
 
 import org.json.JSONArray;
@@ -107,7 +108,7 @@ public class Craft {
                     if (response != null) {
                         Auth auth = new Auth(context);
 
-                        String role = auth.getUserString(Auth.roleKey);
+                        String role = auth.getUserString(Auth.ROLE_KEY);
 
                         auth.queryUser(result -> {
                             ArrayList<String> bookmarkList = new ArrayList<>();
@@ -248,7 +249,7 @@ public class Craft {
             @Override
             public Map<String, String> getHeaders() {
                 HashMap<String, String> headers = new HashMap<>();
-                headers.put("authorization", String.format("Bearer %s", auth.getUserString(Auth.authTokenKey)));
+                headers.put("authorization", String.format("Bearer %s", auth.getUserString(Auth.AUTH_TOKEN_KEY)));
                 return headers;
             }
         };
@@ -302,12 +303,37 @@ public class Craft {
                 @Override
                 public Map<String, String> getHeaders() {
                     HashMap<String, String> headers = new HashMap<>();
-                    headers.put("authorization", String.format("Bearer %s", auth.getUserString(Auth.authTokenKey)));
+                    headers.put("authorization", String.format("Bearer %s", auth.getUserString(Auth.AUTH_TOKEN_KEY)));
                     return headers;
                 }
             };
 
             queue.add(jsonObjectRequest);
         }
+    }
+
+    public static void queryCraftById(Context context, final MainActivity.VolleyCallback callback, String craftId) {
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put("id", craftId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        RequestQueue queue = Volley.newRequestQueue(context);
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                Utils.getBaseUrl(context) + "/dog/id",
+                jsonObject,
+                callback::onSuccess,
+                error -> {
+                    error.printStackTrace();
+                    Toast.makeText(context, error.toString(), Toast.LENGTH_LONG).show();
+                }
+        );
+
+        queue.add(jsonObjectRequest);
     }
 }

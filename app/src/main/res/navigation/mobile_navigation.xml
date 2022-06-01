@@ -12,14 +12,13 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.swivelsoftware.mobile_app_project.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_admin"
+        android:name="com.swivelsoftware.mobile_app_project.ui.admin.AdminFragment"
+        android:label="@string/menu_admin"
+        tools:layout="@layout/fragment_admin" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
+        android:id="@+id/nav_bookmark"
         android:name="com.swivelsoftware.mobile_app_project.ui.bookmark.BookmarkFragment"
-        android:label="@string/menu_bookmark"
-        tools:layout="@layout/fragment_bookmark" />
+        android:label="@string/menu_bookmark" />
 </navigation>
