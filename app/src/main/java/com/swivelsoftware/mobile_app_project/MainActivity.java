@@ -93,7 +93,17 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        menu.findItem(R.id.action_add_craft).setVisible(!auth.getUserString(Auth.AUTH_TOKEN_KEY).isEmpty() && auth.getUserString(Auth.ROLE_KEY).equals(Auth.ROLE_EMPLOYEE));
+
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        invalidateOptionsMenu();
     }
 
     @Override
@@ -112,14 +122,23 @@ public class MainActivity extends AppCompatActivity {
     private void logout() {
         auth.setAuthToken("");
         setHeader();
+
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+
+        finish();
     }
 
     public interface VolleyCallback {
         void onSuccess(JSONObject result);
     }
 
-    private void setAdminMenu(boolean t) {
-        navigationView.getMenu().findItem(R.id.nav_admin).setVisible(t);
+    private void setBookmarkMenu(boolean bool) {
+        navigationView.getMenu().findItem(R.id.nav_bookmark).setVisible(bool);
+    }
+
+    private void setAdminMenu(boolean bool) {
+        navigationView.getMenu().findItem(R.id.nav_admin).setVisible(bool);
     }
 
     public void setHeader() {
@@ -159,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
         accountAction.setOnClickListener(v -> goSignin());
 
         setAdminMenu(false);
+        setBookmarkMenu(false);
     }
 
     private void setLoginHeader(TextView userName, TextView userEmail, Button accountAction) {
@@ -168,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
         accountAction.setOnClickListener(v -> logout());
 
         setAdminMenu(auth.getUserBoolean(Auth.ADMIN_KEY));
+        setBookmarkMenu(true);
     }
 
     public void goEditCraft(View view) {

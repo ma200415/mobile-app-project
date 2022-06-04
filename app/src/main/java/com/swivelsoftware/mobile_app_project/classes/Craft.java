@@ -108,106 +108,27 @@ public class Craft {
                     if (response != null) {
                         Auth auth = new Auth(context);
 
-                        String role = auth.getUserString(Auth.ROLE_KEY);
+                        ArrayList<String> bookmarkList = new ArrayList<>();
 
-                        auth.queryUser(result -> {
-                            ArrayList<String> bookmarkList = new ArrayList<>();
+                        if (!auth.getUserString(Auth.AUTH_TOKEN_KEY).isEmpty()) {
+                            auth.queryUser(result -> {
+                                if (result.has("bookmarks")) {
+                                    try {
+                                        JSONArray bookmarks = result.getJSONArray("bookmarks");
 
-                            if (result.has("bookmarks")) {
-                                try {
-                                    JSONArray bookmarks = result.getJSONArray("bookmarks");
-
-                                    for (int i = 0; i < bookmarks.length(); i++) {
-                                        bookmarkList.add(bookmarks.getString(i));
+                                        for (int i = 0; i < bookmarks.length(); i++) {
+                                            bookmarkList.add(bookmarks.getString(i));
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
                                     }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
                                 }
-                            }
 
-                            craftCardLayout.removeAllViews();
-
-                            if (code != BOOKMARK_CODE) {
-                                View welcomeCard = inflater.inflate(R.layout.welcome_card, craftCardLayout, false);
-
-                                craftCardLayout.addView(welcomeCard);
-                            }
-
-                            for (int i = 0; i < response.length(); i++) {
-                                try {
-                                    JSONObject jsonObject = response.getJSONObject(i);
-
-                                    Craft craft = new Craft(jsonObject);
-
-                                    if (!bookmarkList.contains(craft.id) && code == BOOKMARK_CODE) {
-                                        continue;
-                                    }
-
-                                    View craftCardView = inflater.inflate(R.layout.craft_card, craftCardLayout, false);
-
-                                    ImageView photoView = craftCardView.findViewById(R.id.craft_card_photo);
-
-                                    TextView titleView = craftCardView.findViewById(R.id.craft_card_title);
-                                    TextView contentView = craftCardView.findViewById(R.id.craft_card_content);
-
-                                    MaterialButton booking = craftCardView.findViewById(R.id.booking);
-                                    MaterialButton edit = craftCardView.findViewById(R.id.edit);
-                                    MaterialButton delete = craftCardView.findViewById(R.id.delete);
-                                    MaterialButton message = craftCardView.findViewById(R.id.message);
-                                    MaterialButton bookmark = craftCardView.findViewById(R.id.bookmark);
-
-                                    edit.setOnClickListener(v -> {
-                                        Intent intent = new Intent(context, EditCraftActivity.class);
-                                        intent.putExtra("mode", Craft.editMode);
-                                        intent.putExtra("craftJson", jsonObject.toString());
-
-                                        context.startActivity(intent);
-                                    });
-
-                                    delete.setOnClickListener(v -> deleteCraft(context, craft.id, auth, code, craftCardLayout, inflater));
-
-                                    if (bookmarkList.contains(craft.id)) {
-                                        bookmark.setOnClickListener(v -> bookmarkCraft(context, (MaterialButton) v, craft.id, auth, UNBOOKMARK));
-                                        bookmark.setIcon(AppCompatResources.getDrawable(context, R.drawable.ic_baseline_bookmark_added_24));
-                                    } else {
-                                        bookmark.setOnClickListener(v -> bookmarkCraft(context, (MaterialButton) v, craft.id, auth, BOOKMARK));
-                                        bookmark.setIcon(AppCompatResources.getDrawable(context, R.drawable.ic_baseline_bookmark_add_24));
-                                    }
-
-                                    if (!craft.photo.isEmpty()) {
-                                        byte[] decodedString = Base64.decode(craft.photo, Base64.DEFAULT);
-                                        Bitmap photo = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
-                                        photoView.setImageBitmap(photo);
-                                    }
-
-                                    String content = String.format("%s: %s\n" +
-                                                    "%s: %s\n" +
-                                                    "%s: %s\n" +
-                                                    "%s: %s\n" +
-                                                    "%s\n",
-                                            context.getString(R.string.store), craft.store,
-                                            context.getString(R.string.description), craft.description,
-                                            context.getString(R.string.date), craft.date,
-                                            context.getString(R.string.addBy), craft.addBy,
-                                            craft.addTimestamp);
-
-                                    titleView.setText(craft.name);
-                                    contentView.setText(content);
-
-                                    if (role.equals(Auth.roleEmployee)) {
-                                        booking.setVisibility(View.GONE);
-//                message.setVisibility(View.GONE);
-                                    } else if (role.equals(Auth.rolePublic)) {
-//                edit.setVisibility(View.GONE);
-//                delete.setVisibility(View.GONE);
-                                    }
-
-                                    craftCardLayout.addView(craftCardView);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
+                                setCraftCardContent(context, code, auth, craftCardLayout, inflater, response, bookmarkList);
+                            });
+                        } else {
+                            setCraftCardContent(context, code, auth, craftCardLayout, inflater, response, bookmarkList);
+                        }
                     }
                 },
                 error -> {
@@ -217,6 +138,96 @@ public class Craft {
         );
 
         queue.add(jsonObjectRequest);
+    }
+
+    private static void setCraftCardContent(Context context, int code, Auth auth, LinearLayout craftCardLayout, LayoutInflater inflater, JSONArray response, ArrayList<String> bookmarkList) {
+        craftCardLayout.removeAllViews();
+
+        if (code != BOOKMARK_CODE) {
+            View welcomeCard = inflater.inflate(R.layout.welcome_card, craftCardLayout, false);
+
+            craftCardLayout.addView(welcomeCard);
+        }
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                JSONObject jsonObject = response.getJSONObject(i);
+
+                Craft craft = new Craft(jsonObject);
+
+                if (!bookmarkList.contains(craft.id) && code == BOOKMARK_CODE) {
+                    continue;
+                }
+
+                View craftCardView = inflater.inflate(R.layout.craft_card, craftCardLayout, false);
+
+                ImageView photoView = craftCardView.findViewById(R.id.craft_card_photo);
+
+                TextView titleView = craftCardView.findViewById(R.id.craft_card_title);
+                TextView contentView = craftCardView.findViewById(R.id.craft_card_content);
+
+                MaterialButton edit = craftCardView.findViewById(R.id.edit);
+                MaterialButton delete = craftCardView.findViewById(R.id.delete);
+                MaterialButton message = craftCardView.findViewById(R.id.message);
+                MaterialButton bookmark = craftCardView.findViewById(R.id.bookmark);
+
+                if (!auth.getUserString(Auth.AUTH_TOKEN_KEY).isEmpty()) {
+                    switch (auth.getUserString(Auth.ROLE_KEY)) {
+                        case Auth.ROLE_EMPLOYEE:
+
+                            break;
+                        case Auth.ROLE_PUBLIC:
+                            edit.setVisibility(View.GONE);
+                            delete.setVisibility(View.GONE);
+                            break;
+                    }
+
+                    edit.setOnClickListener(v -> {
+                        Intent intent = new Intent(context, EditCraftActivity.class);
+                        intent.putExtra("mode", Craft.editMode);
+                        intent.putExtra("craftJson", jsonObject.toString());
+
+                        context.startActivity(intent);
+                    });
+
+                    delete.setOnClickListener(v -> deleteCraft(context, craft.id, auth, code, craftCardLayout, inflater));
+
+                    if (bookmarkList.contains(craft.id)) {
+                        bookmark.setOnClickListener(v -> bookmarkCraft(context, (MaterialButton) v, craft.id, auth, UNBOOKMARK));
+                        bookmark.setIcon(AppCompatResources.getDrawable(context, R.drawable.ic_baseline_bookmark_added_24));
+                    } else {
+                        bookmark.setOnClickListener(v -> bookmarkCraft(context, (MaterialButton) v, craft.id, auth, BOOKMARK));
+                        bookmark.setIcon(AppCompatResources.getDrawable(context, R.drawable.ic_baseline_bookmark_add_24));
+                    }
+                } else {
+                    craftCardView.findViewById(R.id.craft_card_button_layout).setVisibility(View.GONE);
+                }
+
+                if (!craft.photo.isEmpty()) {
+                    byte[] decodedString = Base64.decode(craft.photo, Base64.DEFAULT);
+                    Bitmap photo = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    photoView.setImageBitmap(photo);
+                }
+
+                String content = String.format("%s: %s\n" +
+                                "%s: %s\n" +
+                                "%s: %s\n" +
+                                "%s: %s\n" +
+                                "%s\n",
+                        context.getString(R.string.store), craft.store,
+                        context.getString(R.string.description), craft.description,
+                        context.getString(R.string.date), craft.date,
+                        context.getString(R.string.addBy), craft.addBy,
+                        craft.addTimestamp);
+
+                titleView.setText(craft.name);
+                contentView.setText(content);
+
+                craftCardLayout.addView(craftCardView);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private static void deleteCraft(Context context, String id, Auth auth, int code, LinearLayout craftCardLayout, LayoutInflater inflater) {

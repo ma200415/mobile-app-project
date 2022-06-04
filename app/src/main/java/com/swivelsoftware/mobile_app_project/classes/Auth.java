@@ -34,8 +34,8 @@ public class Auth {
     final public static String ROLE_KEY = "role";
     final public static String BOOKMARK_KEY = "bookmarks";
 
-    final public static String roleEmployee = "employee";
-    final public static String rolePublic = "public";
+    final static public String ROLE_PUBLIC = "public";
+    final static public String ROLE_EMPLOYEE = "employee";
 
     public String userID, lastName, firstName, email, role;
     public boolean admin;
