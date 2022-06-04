@@ -11,7 +11,6 @@ import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
-import android.util.Base64;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
@@ -38,12 +37,12 @@ import com.swivelsoftware.mobile_app_project.databinding.ActivityEditCraftBindin
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -104,6 +103,12 @@ public class EditCraftActivity extends AppCompatActivity {
                         binding.inputStore.setText(craft.store, false);
                         binding.inputDate.setText(craft.date);
                         binding.inputDescription.setText(craft.description);
+
+                        if (!craft.photo.isEmpty()) {
+                            craftPhotoBitmap = Utils.decodeBase64ToBitmap(craft.photo);
+
+                            binding.imagePreview.setImageBitmap(craftPhotoBitmap);
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -153,13 +158,18 @@ public class EditCraftActivity extends AppCompatActivity {
                         .build();
 
         dateRangePicker.addOnPositiveButtonClickListener(selection -> {
-            Calendar fromCal = Calendar.getInstance();
-            Calendar toCal = Calendar.getInstance();
+            Calendar startCal = Calendar.getInstance();
+            Calendar endCal = Calendar.getInstance();
 
-            fromCal.setTimeInMillis(selection.first);
-            toCal.setTimeInMillis(selection.second);
+            startCal.setTimeInMillis(selection.first);
+            endCal.setTimeInMillis(selection.second);
 
-            binding.inputDate.setText(fromCal.getTime().toString());
+            Date startDate = startCal.getTime();
+            Date endDate = endCal.getTime();
+
+            String formattedDateRange = String.format("%s - %s", Utils.formatDate(startDate), Utils.formatDate(endDate));
+
+            binding.inputDate.setText(formattedDateRange);
         });
 
         dateRangePicker.show(getSupportFragmentManager(), "dateRangePicker");
@@ -173,10 +183,7 @@ public class EditCraftActivity extends AppCompatActivity {
         String photo = "";
 
         if (craftPhotoBitmap != null) {
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            craftPhotoBitmap.compress(Bitmap.CompressFormat.JPEG, 60, stream);
-            byte[] imageBytes = stream.toByteArray();
-            photo = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+            photo = Utils.encodeBitmapToBase64(craftPhotoBitmap);
         }
 
         switch (mode) {

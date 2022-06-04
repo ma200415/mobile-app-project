@@ -3,9 +3,7 @@ package com.swivelsoftware.mobile_app_project.classes;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -125,7 +123,7 @@ public class Craft {
                                 }
 
                                 setCraftCardContent(context, code, auth, craftCardLayout, inflater, response, bookmarkList);
-                            });
+                            }, auth.getUserString(Auth.USERID_KEY));
                         } else {
                             setCraftCardContent(context, code, auth, craftCardLayout, inflater, response, bookmarkList);
                         }
@@ -204,24 +202,30 @@ public class Craft {
                 }
 
                 if (!craft.photo.isEmpty()) {
-                    byte[] decodedString = Base64.decode(craft.photo, Base64.DEFAULT);
-                    Bitmap photo = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+                    Bitmap photo = Utils.decodeBase64ToBitmap(craft.photo);
                     photoView.setImageBitmap(photo);
                 }
 
-                String content = String.format("%s: %s\n" +
-                                "%s: %s\n" +
-                                "%s: %s\n" +
-                                "%s: %s\n" +
-                                "%s\n",
-                        context.getString(R.string.store), craft.store,
-                        context.getString(R.string.description), craft.description,
-                        context.getString(R.string.date), craft.date,
-                        context.getString(R.string.addBy), craft.addBy,
-                        craft.addTimestamp);
+                auth.queryUser(result -> {
+                    String content = null;
+
+                    try {
+                        content = String.format("%s: %s\n" +
+                                        "%s: %s\n" +
+                                        "%s: %s\n" +
+                                        "%s: %s %s (%s)\n",
+                                context.getString(R.string.store), craft.store,
+                                context.getString(R.string.description), craft.description,
+                                context.getString(R.string.date), craft.date,
+                                context.getString(R.string.addBy), result.getString(Auth.FIRSTNAME_KEY), result.getString(Auth.LASTNAME_KEY), Utils.formatDate(craft.addTimestamp));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    contentView.setText(content);
+                }, craft.addBy);
 
                 titleView.setText(craft.name);
-                contentView.setText(content);
 
                 craftCardLayout.addView(craftCardView);
             } catch (JSONException e) {

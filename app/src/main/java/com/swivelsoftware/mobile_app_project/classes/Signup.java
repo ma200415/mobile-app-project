@@ -6,11 +6,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Signup {
-    EditText lastName, firstName, email, password, code;
+    EditText firstName, lastName, email, password, code;
 
-    public Signup(EditText lastName, EditText firstName, EditText email, EditText password, EditText code) {
-        this.lastName = lastName;
+    public Signup(EditText firstName, EditText lastName, EditText email, EditText password, EditText code) {
         this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.code = code;
@@ -39,8 +39,8 @@ public class Signup {
         JSONObject jsonObject = new JSONObject();
 
         try {
-            jsonObject.put("lastName", lastName.getText().toString());
             jsonObject.put("firstName", firstName.getText().toString());
+            jsonObject.put("lastName", lastName.getText().toString());
             jsonObject.put("email", email.getText().toString());
             jsonObject.put("password", password.getText().toString());
             jsonObject.put("code", code.getText().toString());

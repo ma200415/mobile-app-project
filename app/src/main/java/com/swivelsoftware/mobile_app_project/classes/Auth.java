@@ -112,11 +112,11 @@ public class Auth {
         queue.add(jsonObjectRequest);
     }
 
-    public void queryUser(final MainActivity.VolleyCallback callback) {
+    public void queryUser(final MainActivity.VolleyCallback callback, String userID) {
         JSONObject jsonObject = new JSONObject();
 
         try {
-            jsonObject.put("id", getUserString(USERID_KEY));
+            jsonObject.put("id", userID);
         } catch (JSONException e) {
             e.printStackTrace();
         }
