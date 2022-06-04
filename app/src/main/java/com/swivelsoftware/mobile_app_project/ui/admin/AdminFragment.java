@@ -103,49 +103,67 @@ public class AdminFragment extends Fragment {
                 null,
                 response -> {
                     for (int i = 0; i < response.length(); i++) {
+                        JSONObject userObject = null;
+
                         try {
-                            JSONObject userObject = response.getJSONObject(i);
+                            userObject = response.getJSONObject(i);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (userObject != null) {
                             Auth user = new Auth(userObject);
 
                             ArrayList<String> bookmarks = new ArrayList<>();
 
-                            for (i = 0; i < user.bookmarks.length(); i++) {
-                                String craftId = user.bookmarks.getString(i);
+                            View userCardView = inflater.inflate(R.layout.user_card, binding.adminLinearLayout, false);
 
-                                Craft.queryCraftById(root.getContext(),
-                                        craftJsonObject -> {
-                                            try {
-                                                View userCardView = inflater.inflate(R.layout.user_card, binding.adminLinearLayout, false);
+                            TextView firstNameView = userCardView.findViewById(R.id.user_first_name);
+                            TextView lastNameView = userCardView.findViewById(R.id.user_last_name);
+                            TextView emailView = userCardView.findViewById(R.id.user_email);
+                            TextView adminView = userCardView.findViewById(R.id.user_admin);
+                            TextView roleView = userCardView.findViewById(R.id.user_role);
+                            TextView bookmarksView = userCardView.findViewById(R.id.user_bookmarks);
 
-                                                TextView firstNameView = userCardView.findViewById(R.id.user_first_name);
-                                                TextView lastNameView = userCardView.findViewById(R.id.user_last_name);
-                                                TextView emailView = userCardView.findViewById(R.id.user_email);
-                                                TextView adminView = userCardView.findViewById(R.id.user_admin);
-                                                TextView roleView = userCardView.findViewById(R.id.user_role);
-                                                TextView bookmarksView = userCardView.findViewById(R.id.user_bookmarks);
+                            firstNameView.setText(user.firstName);
+                            lastNameView.setText(user.lastName);
+                            emailView.setText(user.email);
+                            adminView.setText(user.admin ? "True" : "False");
+                            roleView.setText(user.role);
 
-                                                firstNameView.setText(user.firstName);
-                                                lastNameView.setText(user.lastName);
-                                                emailView.setText(user.email);
-                                                adminView.setText(user.admin ? "True" : "False");
-                                                roleView.setText(user.role);
+                            if (user.bookmarks != null && user.bookmarks.length() > 0) {
+                                for (int x = 0; x < user.bookmarks.length(); x++) {
+                                    String craftId = null;
 
-                                                String craftName = craftJsonObject.getString("name");
+                                    try {
+                                        craftId = user.bookmarks.getString(x);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
 
-                                                bookmarks.add(String.format("%s (%s)", craftName, craftId));
+                                    String finalCraftId = craftId;
+
+                                    Craft.queryCraftById(root.getContext(),
+                                            craftJsonObject -> {
+                                                String craftName = null;
+
+                                                try {
+                                                    craftName = craftJsonObject.getString("name");
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+
+                                                bookmarks.add(String.format("%s (%s)", craftName, finalCraftId));
 
                                                 bookmarksView.setText(String.join("\r\n", bookmarks));
-
-                                                binding.adminLinearLayout.addView(userCardView);
-                                            } catch (JSONException e) {
-                                                e.printStackTrace();
-                                            }
-                                        },
-                                        craftId);
+                                            },
+                                            craftId);
+                                }
+                            } else {
+                                bookmarksView.setText("-");
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                            Toast.makeText(root.getContext(), e.toString(), Toast.LENGTH_LONG).show();
+
+                            binding.adminLinearLayout.addView(userCardView);
                         }
                     }
                 },
