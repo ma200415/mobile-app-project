@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 R.id.nav_home, R.id.nav_admin, R.id.nav_bookmark)
                 .setOpenableLayout(drawer)
                 .build();
+
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
@@ -117,6 +118,10 @@ public class MainActivity extends AppCompatActivity {
         void onSuccess(JSONObject result);
     }
 
+    private void setAdminMenu(boolean t) {
+        navigationView.getMenu().findItem(R.id.nav_admin).setVisible(t);
+    }
+
     public void setHeader() {
         View headerView = navigationView.getHeaderView(0);
 
@@ -152,6 +157,8 @@ public class MainActivity extends AppCompatActivity {
         userEmail.setText("");
         accountAction.setText(getString(R.string.action_login));
         accountAction.setOnClickListener(v -> goSignin());
+
+        setAdminMenu(false);
     }
 
     private void setLoginHeader(TextView userName, TextView userEmail, Button accountAction) {
@@ -159,6 +166,8 @@ public class MainActivity extends AppCompatActivity {
         userEmail.setText(String.format("%s", auth.getUserString(Auth.EMAIL_KEY)));
         accountAction.setText(getString(R.string.action_logout));
         accountAction.setOnClickListener(v -> logout());
+
+        setAdminMenu(auth.getUserBoolean(Auth.ADMIN_KEY));
     }
 
     public void goEditCraft(View view) {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">mobile-app-project</string>
+    <string name="app_name">Mobile App Project</string>
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
