@@ -79,10 +79,8 @@ public class MainActivity extends AppCompatActivity {
                         Intent data = result.getData();
 
                         if (data != null) {
-                            switch (data.getStringExtra("ACTION")) {
-                                case "login":
-                                    setHeader();
-                                    break;
+                            if ("login".equals(data.getStringExtra("ACTION"))) {
+                                setHeader();
                             }
                         }
                     }

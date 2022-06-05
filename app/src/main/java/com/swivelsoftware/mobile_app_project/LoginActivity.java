@@ -17,7 +17,6 @@ import com.swivelsoftware.mobile_app_project.classes.Login;
 import com.swivelsoftware.mobile_app_project.classes.Utils;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class LoginActivity extends AppCompatActivity {
     EditText email, password;

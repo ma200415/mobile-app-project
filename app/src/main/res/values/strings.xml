@@ -45,4 +45,5 @@
     <string name="role">Role</string>
     <string name="email">Email</string>
     <string name="admin">Admin</string>
+    <string name="no_results">No Results</string>
 </resources>

@@ -138,6 +138,10 @@ public class MessageFragment extends Fragment {
 
                             binding.messagesLayout.addView(messageCardView);
                         }
+                    } else {
+                        View noResultsView = _inflater.inflate(R.layout.no_result, binding.messagesLayout, false);
+
+                        binding.messagesLayout.addView(noResultsView);
                     }
                 },
                 error -> {

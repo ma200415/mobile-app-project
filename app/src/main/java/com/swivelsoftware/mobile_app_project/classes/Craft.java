@@ -7,11 +7,11 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.appcompat.widget.LinearLayoutCompat;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -96,7 +96,7 @@ public class Craft {
         return jsonObject;
     }
 
-    public static void setCraftCard(Context context, int code, LinearLayout craftCardLayout, LayoutInflater inflater) {
+    public static void setCraftCard(Context context, int code, LinearLayoutCompat craftCardLayout, LayoutInflater inflater) {
         RequestQueue queue = Volley.newRequestQueue(context);
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
@@ -139,7 +139,7 @@ public class Craft {
         queue.add(jsonObjectRequest);
     }
 
-    private static void setCraftCardContent(Context context, int code, Auth auth, LinearLayout craftCardLayout, LayoutInflater inflater, JSONArray response, ArrayList<String> bookmarkList) {
+    private static void setCraftCardContent(Context context, int code, Auth auth, LinearLayoutCompat craftCardLayout, LayoutInflater inflater, JSONArray response, ArrayList<String> bookmarkList) {
         craftCardLayout.removeAllViews();
 
         if (code != BOOKMARK_CODE) {
@@ -171,14 +171,9 @@ public class Craft {
                 MaterialButton bookmark = craftCardView.findViewById(R.id.bookmark);
 
                 if (!auth.getUserString(Auth.AUTH_TOKEN_KEY).isEmpty()) {
-                    switch (auth.getUserString(Auth.ROLE_KEY)) {
-                        case Auth.ROLE_EMPLOYEE:
-
-                            break;
-                        case Auth.ROLE_PUBLIC:
-                            edit.setVisibility(View.GONE);
-                            delete.setVisibility(View.GONE);
-                            break;
+                    if (Auth.ROLE_PUBLIC.equals(auth.getUserString(Auth.ROLE_KEY))) {
+                        edit.setVisibility(View.GONE);
+                        delete.setVisibility(View.GONE);
                     }
 
                     edit.setOnClickListener(v -> {
@@ -246,9 +241,15 @@ public class Craft {
                 e.printStackTrace();
             }
         }
+
+        if (craftCardLayout.getChildCount() < 1) {
+            View noResultsView = inflater.inflate(R.layout.no_result, craftCardLayout, false);
+
+            craftCardLayout.addView(noResultsView);
+        }
     }
 
-    private static void deleteCraft(Context context, String id, Auth auth, int code, LinearLayout craftCardLayout, LayoutInflater inflater) {
+    private static void deleteCraft(Context context, String id, Auth auth, int code, LinearLayoutCompat craftCardLayout, LayoutInflater inflater) {
         JSONObject requestJson = new JSONObject();
 
         try {
