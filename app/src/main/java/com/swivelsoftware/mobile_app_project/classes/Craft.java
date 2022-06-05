@@ -198,13 +198,16 @@ public class Craft {
                         bookmark.setOnClickListener(v -> bookmarkCraft(context, (MaterialButton) v, craft.id, auth, BOOKMARK));
                         bookmark.setIcon(AppCompatResources.getDrawable(context, R.drawable.ic_baseline_bookmark_add_24));
                     }
-//todo
-                    message.setOnClickListener(v -> {
-                        Intent intent = new Intent(context, MessageActivity.class);
-                        intent.putExtra("craftId", craft.id);
 
-                        context.startActivity(intent);
-                    });
+                    Message.queryMessage(context, result ->
+                            message.setOnClickListener(v -> {
+                                if (result.has("_id")) {
+                                    Intent intent = new Intent(context, MessageActivity.class);
+                                    intent.putExtra("messageJObjectString", result.toString());
+
+                                    context.startActivity(intent);
+                                }
+                            }), craft.id, auth);
                 } else {
                     craftCardView.findViewById(R.id.craft_card_button_layout).setVisibility(View.GONE);
                 }

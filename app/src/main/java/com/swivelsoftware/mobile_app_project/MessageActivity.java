@@ -48,7 +48,7 @@ public class MessageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         String messageJObjectString = intent.getStringExtra("messageJObjectString");
-//todo
+
         try {
             JSONObject messageJObj = new JSONObject(messageJObjectString);
 
