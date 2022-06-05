@@ -35,8 +35,6 @@ public class MessageActivity extends AppCompatActivity {
 
     Auth auth;
 
-    Message _message;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,31 +45,47 @@ public class MessageActivity extends AppCompatActivity {
         auth = new Auth(this);
 
         Intent intent = getIntent();
-        String messageJObjectString = intent.getStringExtra("messageJObjectString");
 
-        try {
-            JSONObject messageJObj = new JSONObject(messageJObjectString);
+        if (intent.hasExtra(Message.MESSAGE_EXTRA)) {
+            String messageJObjectString = intent.getStringExtra(Message.MESSAGE_EXTRA);
 
-            _message = new Message(messageJObj);
-        } catch (JSONException e) {
-            e.printStackTrace();
+            Message message = null;
+
+            try {
+                JSONObject messageJObj = new JSONObject(messageJObjectString);
+
+                message = new Message(messageJObj);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            if (message != null) {
+                setMessages(message);
+            }
+
+            new Handler().post(this::scrollToDown);
+
+            Message finalMessage = message;
+            binding.replyLayout.setEndIconOnClickListener(event -> submit(finalMessage));
+        } else if (intent.hasExtra(Message.NEW_MESSAGE_EXTRA)) {
+            String craftId = intent.getStringExtra(Message.NEW_MESSAGE_EXTRA);
+
+            binding.replyLayout.setEndIconOnClickListener(event -> submitNew(craftId));
         }
-
-        setMessages();
-
-        new Handler().post(() -> binding.messageScrollView.fullScroll(ScrollView.FOCUS_DOWN));
-
-        binding.replyLayout.setEndIconOnClickListener(event -> submit());
     }
 
-    private void setMessages() {
-        setMessage(_message.userId, _message.message, _message.timestamp);
+    private void scrollToDown() {
+        binding.messageScrollView.fullScroll(ScrollView.FOCUS_DOWN);
+    }
 
-        for (int i = 0; i < _message.replys.length(); i++) {
+    private void setMessages(Message message) {
+        setMessage(message.userId, message.message, message.timestamp);
+
+        for (int i = 0; i < message.replys.length(); i++) {
             Reply reply = null;
 
             try {
-                reply = new Reply(_message.replys.getJSONObject(i));
+                reply = new Reply(message.replys.getJSONObject(i));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -99,21 +113,38 @@ public class MessageActivity extends AppCompatActivity {
         binding.messagesLayout.addView(messageCard);
     }
 
-    private void submit() {
+    private void submit(Message message) {
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put("message", Objects.requireNonNull(binding.reply.getText()).toString());
+            jsonObject.put("messageId", message.messageId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        send(jsonObject);
+    }
+
+    private void submitNew(String craftId) {
+        JSONObject jsonObject = new JSONObject();
+
+        try {
+            jsonObject.put("message", Objects.requireNonNull(binding.reply.getText()).toString());
+            jsonObject.put("craftId", craftId);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        send(jsonObject);
+    }
+
+    private void send(JSONObject jsonObject) {
         if (Objects.requireNonNull(binding.reply.getText()).toString().trim().isEmpty()) {
             return;
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);
-
-        JSONObject jsonObject = new JSONObject();
-
-        try {
-            jsonObject.put("message", Objects.requireNonNull(binding.reply.getText()).toString());
-            jsonObject.put("messageId", _message.messageId);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
                 Request.Method.POST,
@@ -121,7 +152,13 @@ public class MessageActivity extends AppCompatActivity {
                 jsonObject,
                 response -> {
                     try {
-                        if (response.has("success") && response.getBoolean("success")) {
+                        if (response.has("_id")) {
+                            Message message = new Message(response);
+
+                            binding.replyLayout.setEndIconOnClickListener(event -> submit(message));
+                        }
+
+                        if (response.has("_id") || (response.has("success") && response.getBoolean("success"))) {
                             Reply reply = new Reply(response);
 
                             setMessage(reply.userId, reply.message, reply.timestamp);
@@ -131,7 +168,7 @@ public class MessageActivity extends AppCompatActivity {
 
                             binding.reply.setText(null);
 
-                            binding.messageScrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                            scrollToDown();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

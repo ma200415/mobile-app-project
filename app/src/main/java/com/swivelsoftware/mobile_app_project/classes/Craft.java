@@ -201,12 +201,15 @@ public class Craft {
 
                     Message.queryMessage(context, result ->
                             message.setOnClickListener(v -> {
-                                if (result.has("_id")) {
-                                    Intent intent = new Intent(context, MessageActivity.class);
-                                    intent.putExtra("messageJObjectString", result.toString());
+                                Intent intent = new Intent(context, MessageActivity.class);
 
-                                    context.startActivity(intent);
+                                if (result.has("_id")) {
+                                    intent.putExtra(Message.MESSAGE_EXTRA, result.toString());
+                                } else {
+                                    intent.putExtra(Message.NEW_MESSAGE_EXTRA, craft.id);
                                 }
+
+                                context.startActivity(intent);
                             }), craft.id, auth);
                 } else {
                     craftCardView.findViewById(R.id.craft_card_button_layout).setVisibility(View.GONE);

@@ -55,10 +55,10 @@ public class MessageFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        getMessages(_inflater);
+        getMessages();
     }
 
-    private void getMessages(LayoutInflater inflater) {
+    private void getMessages() {
         RequestQueue queue = Volley.newRequestQueue(root.getContext());
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
@@ -95,13 +95,13 @@ public class MessageFragment extends Fragment {
                                 e.printStackTrace();
                             }
 
-                            View messageCardView = inflater.inflate(R.layout.message_list_card, binding.messagesLayout, false);
+                            View messageCardView = _inflater.inflate(R.layout.message_list_card, binding.messagesLayout, false);
 
                             JSONObject finalMessageJObj = messageJObj;
 
                             messageCardView.setOnClickListener(e -> {
                                 Intent intent = new Intent(root.getContext(), MessageActivity.class);
-                                intent.putExtra("messageJObjectString", finalMessageJObj.toString());
+                                intent.putExtra(Message.MESSAGE_EXTRA, finalMessageJObj.toString());
 
                                 startActivity(intent);
                             });

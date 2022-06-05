@@ -17,6 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Message {
+    public static String MESSAGE_EXTRA = "101";
+    public static String NEW_MESSAGE_EXTRA = "10";
+
     public String messageId, message, userId, craftId, timestamp;
 
     public JSONArray replys;
