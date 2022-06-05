@@ -145,6 +145,12 @@ public class AdminFragment extends Fragment {
 
                                     Craft.queryCraftById(root.getContext(),
                                             craftJsonObject -> {
+                                                if (!craftJsonObject.has("name")) {
+                                                    bookmarksView.setText("-");
+
+                                                    return;
+                                                }
+
                                                 String craftName = null;
 
                                                 try {
