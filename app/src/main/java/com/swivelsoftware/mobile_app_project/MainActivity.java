@@ -172,10 +172,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setGuestHeader(TextView userName, TextView userEmail, Button accountAction) {
-        auth.setAuthToken("");
+        auth.setAuthToken(null);
 
         userName.setText(getString(R.string.welcome));
-        userEmail.setText("");
+        userEmail.setText(null);
         accountAction.setText(getString(R.string.action_login));
         accountAction.setOnClickListener(v -> goSignin());
 
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setLoginHeader(TextView userName, TextView userEmail, Button accountAction) {
-        userName.setText(String.format("%s %s", auth.getUserString(Auth.LASTNAME_KEY), auth.getUserString(Auth.FIRSTNAME_KEY)));
+        userName.setText(String.format("%s %s", auth.getUserString(Auth.FIRSTNAME_KEY), auth.getUserString(Auth.LASTNAME_KEY)));
         userEmail.setText(String.format("%s", auth.getUserString(Auth.EMAIL_KEY)));
         accountAction.setText(getString(R.string.action_logout));
         accountAction.setOnClickListener(v -> logout());
