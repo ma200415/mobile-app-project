@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences pref = this.getSharedPreferences("APIUrl", MODE_PRIVATE);
         pref.edit()
-                .putString("apiUrl", cloudUrl)
+                .putString("apiUrl", localUrl)
                 .apply();
 
         auth = new Auth(this);
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_admin, R.id.nav_bookmark)
+                R.id.nav_home, R.id.nav_admin, R.id.nav_bookmark, R.id.nav_message)
                 .setOpenableLayout(drawer)
                 .build();
 
@@ -141,6 +141,10 @@ public class MainActivity extends AppCompatActivity {
         navigationView.getMenu().findItem(R.id.nav_admin).setVisible(bool);
     }
 
+    private void setMessageMenu(boolean bool) {
+        navigationView.getMenu().findItem(R.id.nav_message).setVisible(bool);
+    }
+
     public void setHeader() {
         View headerView = navigationView.getHeaderView(0);
 
@@ -179,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
 
         setAdminMenu(false);
         setBookmarkMenu(false);
+        setMessageMenu(false);
     }
 
     private void setLoginHeader(TextView userName, TextView userEmail, Button accountAction) {
@@ -189,14 +194,10 @@ public class MainActivity extends AppCompatActivity {
 
         setAdminMenu(auth.getUserBoolean(Auth.ADMIN_KEY));
         setBookmarkMenu(true);
+        setMessageMenu(true);
     }
 
     public void goEditCraft(View view) {
-        View v = view.getRootView();
-
-        TextView title = v.findViewById(R.id.craft_card_title);
-        TextView content = v.findViewById(R.id.craft_card_content);
-
         startCraft(Craft.editMode);
     }
 

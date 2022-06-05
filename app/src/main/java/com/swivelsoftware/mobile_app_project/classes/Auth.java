@@ -16,7 +16,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,7 +65,7 @@ public class Auth {
                 .apply();
     }
 
-    public void setUser(String userID, String lastName, String firstName, String email, boolean admin, String role) {
+    public void setCurrentUser(String userID, String lastName, String firstName, String email, boolean admin, String role) {
         SharedPreferences pref = context.getSharedPreferences(spName, MODE_PRIVATE);
         pref.edit()
                 .putString(USERID_KEY, userID)
@@ -112,7 +111,7 @@ public class Auth {
         queue.add(jsonObjectRequest);
     }
 
-    public void queryUser(final MainActivity.VolleyCallback callback, String userID) {
+    public void queryUserById(final MainActivity.VolleyCallback callback, String userID) {
         JSONObject jsonObject = new JSONObject();
 
         try {

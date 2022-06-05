@@ -15,6 +15,7 @@ import java.util.Locale;
 
 public class Utils {
     final static SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+    final static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.US);
 
     static public String getSharedPrefString(Context context, String name, String key) {
         return context.getSharedPreferences(name, MODE_PRIVATE).getString(key, "");
@@ -46,6 +47,12 @@ public class Utils {
         Date date = parseMongoDBDate(stringDate);
 
         return dateFormat.format(date);
+    }
+
+    static public String formatDateTime(String stringDate) {
+        Date date = parseMongoDBDate(stringDate);
+
+        return dateTimeFormat.format(date);
     }
 
     static public Bitmap decodeBase64ToBitmap(String base64) {

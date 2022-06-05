@@ -46,18 +46,12 @@ public class LoginActivity extends AppCompatActivity {
                     try {
                         if (response.has("success") && response.getBoolean("success")) {
                             String authToken = response.getString("authToken");
-                            JSONObject userObject = response.getJSONObject("user");
-                            JSONObject payloadObject = userObject.getJSONObject("payload");
-                            String userID = payloadObject.getString("_id");
-                            String lastName = payloadObject.getString("lastName");
-                            String firstName = payloadObject.getString("firstName");
-                            String email = payloadObject.getString("email");
-                            boolean admin = payloadObject.getBoolean("admin");
-                            String role = payloadObject.getString("role");
+
+                            Auth _auth = new Auth(response.getJSONObject("user").getJSONObject("payload"));
 
                             Auth auth = new Auth(this);
                             auth.setAuthToken(authToken);
-                            auth.setUser(userID, lastName, firstName, email, admin, role);
+                            auth.setCurrentUser(_auth.userID, _auth.lastName, _auth.firstName, _auth.email, _auth.admin, _auth.role);
 
                             Intent intent = new Intent();
                             intent.putExtra("ACTION", "login");

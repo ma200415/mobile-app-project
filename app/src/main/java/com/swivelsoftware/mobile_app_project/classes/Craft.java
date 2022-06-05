@@ -21,6 +21,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.material.button.MaterialButton;
 import com.swivelsoftware.mobile_app_project.EditCraftActivity;
 import com.swivelsoftware.mobile_app_project.MainActivity;
+import com.swivelsoftware.mobile_app_project.MessageActivity;
 import com.swivelsoftware.mobile_app_project.R;
 
 import org.json.JSONArray;
@@ -109,7 +110,7 @@ public class Craft {
                         ArrayList<String> bookmarkList = new ArrayList<>();
 
                         if (!auth.getUserString(Auth.AUTH_TOKEN_KEY).isEmpty()) {
-                            auth.queryUser(result -> {
+                            auth.queryUserById(result -> {
                                 if (result.has("bookmarks")) {
                                     try {
                                         JSONArray bookmarks = result.getJSONArray("bookmarks");
@@ -197,6 +198,13 @@ public class Craft {
                         bookmark.setOnClickListener(v -> bookmarkCraft(context, (MaterialButton) v, craft.id, auth, BOOKMARK));
                         bookmark.setIcon(AppCompatResources.getDrawable(context, R.drawable.ic_baseline_bookmark_add_24));
                     }
+//todo
+                    message.setOnClickListener(v -> {
+                        Intent intent = new Intent(context, MessageActivity.class);
+                        intent.putExtra("craftId", craft.id);
+
+                        context.startActivity(intent);
+                    });
                 } else {
                     craftCardView.findViewById(R.id.craft_card_button_layout).setVisibility(View.GONE);
                 }
@@ -206,7 +214,7 @@ public class Craft {
                     photoView.setImageBitmap(photo);
                 }
 
-                auth.queryUser(result -> {
+                auth.queryUserById(result -> {
                     String content = null;
 
                     try {

@@ -23,11 +23,17 @@
         android:theme="@style/Theme.Mobileappproject"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".MessageActivity"
+            android:exported="false"
+            android:label="@string/menu_message" />
+        <activity
             android:name=".CameraActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="" />
         <activity
             android:name=".EditCraftActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -40,10 +46,12 @@
         </activity>
         <activity
             android:name=".SignupActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/action_sign_up" />
         <activity
             android:name=".LoginActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="@string/action_login" />
     </application>
 
 </manifest>

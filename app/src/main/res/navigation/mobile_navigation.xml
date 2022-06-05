@@ -21,4 +21,9 @@
         android:id="@+id/nav_bookmark"
         android:name="com.swivelsoftware.mobile_app_project.ui.bookmark.BookmarkFragment"
         android:label="@string/menu_bookmark" />
+
+    <fragment
+        android:id="@+id/nav_message"
+        android:name="com.swivelsoftware.mobile_app_project.ui.message.MessageFragment"
+        android:label="@string/menu_message" />
 </navigation>

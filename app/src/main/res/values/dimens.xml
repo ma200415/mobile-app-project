@@ -7,4 +7,6 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="activity_input_field_margin">16dp</dimen>
     <dimen name="user_key">100dp</dimen>
+    <dimen name="message_list_key">100dp</dimen>
+    <dimen name="reply_height">100dp</dimen>
 </resources>
