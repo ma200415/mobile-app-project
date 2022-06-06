@@ -1,4 +1,4 @@
-package com.swivelsoftware.mobile_app_project.classes;
+package com.mobile_app_project.classes;
 
 import android.content.Context;
 import android.content.Intent;
@@ -6,6 +6,9 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,10 +22,10 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.button.MaterialButton;
-import com.swivelsoftware.mobile_app_project.EditCraftActivity;
-import com.swivelsoftware.mobile_app_project.MainActivity;
-import com.swivelsoftware.mobile_app_project.MessageActivity;
-import com.swivelsoftware.mobile_app_project.R;
+import com.mobile_app_project.EditCraftActivity;
+import com.mobile_app_project.MainActivity;
+import com.mobile_app_project.MessageActivity;
+import com.mobile_app_project.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +44,8 @@ public class Craft {
 
     final static public int UNBOOKMARK = 102;
     final static public int BOOKMARK = 103;
+
+    final static public String[] stores = {"Tsuen Wan", "Causeway Bay", "Mong Kok"};
 
     public String id, name, store, date, description, addBy, addTimestamp, photo;
 
@@ -96,13 +101,13 @@ public class Craft {
         return jsonObject;
     }
 
-    public static void setCraftCard(Context context, int code, LinearLayoutCompat craftCardLayout, LayoutInflater inflater) {
+    public static void setCraftCard(Context context, int code, LinearLayoutCompat craftCardParentLayout, LinearLayoutCompat craftCardLayout, LayoutInflater inflater, JSONArray requestArray) {
         RequestQueue queue = Volley.newRequestQueue(context);
 
         JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
                 Request.Method.POST,
                 Utils.getBaseUrl(context) + "/dog",
-                null,
+                requestArray,
                 response -> {
                     if (response != null) {
                         Auth auth = new Auth(context);
@@ -123,10 +128,10 @@ public class Craft {
                                     }
                                 }
 
-                                setCraftCardContent(context, code, auth, craftCardLayout, inflater, response, bookmarkList);
+                                setCraftCardContent(context, code, auth, craftCardParentLayout, craftCardLayout, inflater, response, bookmarkList);
                             }, auth.getUserString(Auth.USERID_KEY));
                         } else {
-                            setCraftCardContent(context, code, auth, craftCardLayout, inflater, response, bookmarkList);
+                            setCraftCardContent(context, code, auth, craftCardParentLayout, craftCardLayout, inflater, response, bookmarkList);
                         }
                     }
                 },
@@ -139,14 +144,38 @@ public class Craft {
         queue.add(jsonObjectRequest);
     }
 
-    private static void setCraftCardContent(Context context, int code, Auth auth, LinearLayoutCompat craftCardLayout, LayoutInflater inflater, JSONArray response, ArrayList<String> bookmarkList) {
+    public static void setStores(Context context, AutoCompleteTextView autoCompleteTextView) {
+        final ArrayAdapter<String> storeAdapter = new ArrayAdapter<>(context, R.layout.craft_store_list_item, stores);
+
+        autoCompleteTextView.setAdapter(storeAdapter);
+    }
+
+    private static void setCraftCardContent(Context context, int code, Auth auth, LinearLayoutCompat craftCardParentLayout, LinearLayoutCompat craftCardLayout, LayoutInflater inflater, JSONArray response, ArrayList<String> bookmarkList) {
         craftCardLayout.removeAllViews();
 
-        if (code != BOOKMARK_CODE) {
-            View welcomeCard = inflater.inflate(R.layout.welcome_card, craftCardLayout, false);
-
-            craftCardLayout.addView(welcomeCard);
+        if (code != HOME_CODE) {
+            craftCardParentLayout.findViewById(R.id.welcome_card).setVisibility(View.GONE);
         }
+
+        AutoCompleteTextView storeAutoComplete = craftCardParentLayout.findViewById(R.id.input_store);
+        Button searchButton = craftCardParentLayout.findViewById(R.id.search);
+
+        setStores(context, storeAutoComplete);
+
+        searchButton.setOnClickListener(e -> {
+            JSONObject jsonObject = new JSONObject();
+
+            try {
+                jsonObject.put("store", storeAutoComplete.getText().toString());
+            } catch (JSONException jsonException) {
+                jsonException.printStackTrace();
+            }
+
+            JSONArray requestArray = new JSONArray();
+            requestArray.put(jsonObject);
+
+            setCraftCard(context, code, craftCardParentLayout, craftCardLayout, inflater, requestArray);
+        });
 
         for (int i = 0; i < response.length(); i++) {
             try {
@@ -184,7 +213,7 @@ public class Craft {
                         context.startActivity(intent);
                     });
 
-                    delete.setOnClickListener(v -> deleteCraft(context, craft.id, auth, code, craftCardLayout, inflater));
+                    delete.setOnClickListener(v -> deleteCraft(context, craft.id, auth, code, craftCardParentLayout, craftCardLayout, inflater));
 
                     if (bookmarkList.contains(craft.id)) {
                         bookmark.setOnClickListener(v -> bookmarkCraft(context, (MaterialButton) v, craft.id, auth, UNBOOKMARK));
@@ -249,7 +278,7 @@ public class Craft {
         }
     }
 
-    private static void deleteCraft(Context context, String id, Auth auth, int code, LinearLayoutCompat craftCardLayout, LayoutInflater inflater) {
+    private static void deleteCraft(Context context, String id, Auth auth, int code, LinearLayoutCompat craftCardParentLayout, LinearLayoutCompat craftCardLayout, LayoutInflater inflater) {
         JSONObject requestJson = new JSONObject();
 
         try {
@@ -266,7 +295,7 @@ public class Craft {
                 requestJson,
                 response -> {
                     if (response != null) {
-                        Craft.setCraftCard(context, code, craftCardLayout, inflater);
+                        Craft.setCraftCard(context, code, craftCardParentLayout, craftCardLayout, inflater, null);
 
                         Toast.makeText(context, "Deleted", Toast.LENGTH_LONG).show();
                     }

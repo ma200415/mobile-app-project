@@ -23,8 +23,8 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
-    <string name="home_welcome_title">Hello, XXX!</string>
-    <string name="home_welcome">welcome to ....</string>
+    <string name="home_welcome_title">Handcraft Market</string>
+    <string name="home_welcome">We collect works designed by Hong Kong, provide space to buy and sell handmade works, and hope to let more people know the story behind Hong Kong handmade works</string>
     <string name="store">Store</string>
     <string name="remark">Remark</string>
     <string name="validity_period">Validity period</string>

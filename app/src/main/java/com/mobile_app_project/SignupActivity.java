@@ -1,4 +1,4 @@
-package com.swivelsoftware.mobile_app_project;
+package com.mobile_app_project;
 
 import android.os.Bundle;
 import android.view.View;
@@ -11,8 +11,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.swivelsoftware.mobile_app_project.classes.Signup;
-import com.swivelsoftware.mobile_app_project.classes.Utils;
+import com.mobile_app_project.classes.Signup;
+import com.mobile_app_project.classes.Utils;
 
 import org.json.JSONException;
 

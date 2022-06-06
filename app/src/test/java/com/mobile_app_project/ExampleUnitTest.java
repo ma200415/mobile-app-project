@@ -1,8 +1,8 @@
-package com.swivelsoftware.mobile_app_project;
+package com.mobile_app_project;
+
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Example local unit test, which will execute on the development machine (host).

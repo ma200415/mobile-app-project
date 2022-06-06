@@ -1,4 +1,4 @@
-package com.swivelsoftware.mobile_app_project;
+package com.mobile_app_project;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -21,9 +21,9 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
-import com.swivelsoftware.mobile_app_project.classes.Auth;
-import com.swivelsoftware.mobile_app_project.classes.Craft;
-import com.swivelsoftware.mobile_app_project.databinding.ActivityMainBinding;
+import com.mobile_app_project.classes.Auth;
+import com.mobile_app_project.classes.Craft;
+import com.mobile_app_project.databinding.ActivityMainBinding;
 
 import org.json.JSONException;
 import org.json.JSONObject;

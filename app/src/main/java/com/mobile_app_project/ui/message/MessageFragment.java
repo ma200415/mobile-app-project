@@ -1,4 +1,4 @@
-package com.swivelsoftware.mobile_app_project.ui.message;
+package com.mobile_app_project.ui.message;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,14 +15,14 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.swivelsoftware.mobile_app_project.MessageActivity;
-import com.swivelsoftware.mobile_app_project.R;
-import com.swivelsoftware.mobile_app_project.classes.Auth;
-import com.swivelsoftware.mobile_app_project.classes.Craft;
-import com.swivelsoftware.mobile_app_project.classes.Message;
-import com.swivelsoftware.mobile_app_project.classes.Reply;
-import com.swivelsoftware.mobile_app_project.classes.Utils;
-import com.swivelsoftware.mobile_app_project.databinding.FragmentMessageBinding;
+import com.mobile_app_project.MessageActivity;
+import com.mobile_app_project.R;
+import com.mobile_app_project.classes.Auth;
+import com.mobile_app_project.classes.Craft;
+import com.mobile_app_project.classes.Message;
+import com.mobile_app_project.classes.Reply;
+import com.mobile_app_project.classes.Utils;
+import com.mobile_app_project.databinding.FragmentMessageBinding;
 
 import org.json.JSONException;
 import org.json.JSONObject;

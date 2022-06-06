@@ -1,4 +1,4 @@
-package com.swivelsoftware.mobile_app_project.ui.home;
+package com.mobile_app_project.ui.home;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.swivelsoftware.mobile_app_project.classes.Craft;
-import com.swivelsoftware.mobile_app_project.databinding.FragmentHomeBinding;
+import com.mobile_app_project.classes.Craft;
+import com.mobile_app_project.databinding.FragmentHomeBinding;
 
 public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
@@ -31,7 +31,7 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        Craft.setCraftCard(root.getContext(), Craft.HOME_CODE, binding.craftCardLayout, _inflater);
+        Craft.setCraftCard(root.getContext(), Craft.HOME_CODE, binding.craftCardParentLayout, binding.craftCardLayout, _inflater, null);
     }
 
     @Override

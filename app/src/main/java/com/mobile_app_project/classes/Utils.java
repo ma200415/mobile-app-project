@@ -1,4 +1,4 @@
-package com.swivelsoftware.mobile_app_project.classes;
+package com.mobile_app_project.classes;
 
 import static android.content.Context.MODE_PRIVATE;
 

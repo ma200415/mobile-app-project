@@ -7,7 +7,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.swivelsoftware.mobile_app_project"
+        applicationId defaultApplicationId
         minSdk 26
         targetSdk 31
         versionCode 1

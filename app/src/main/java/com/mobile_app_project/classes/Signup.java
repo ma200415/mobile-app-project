@@ -1,4 +1,4 @@
-package com.swivelsoftware.mobile_app_project.classes;
+package com.mobile_app_project.classes;
 
 import android.widget.EditText;
 

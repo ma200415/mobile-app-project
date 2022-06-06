@@ -1,4 +1,4 @@
-package com.swivelsoftware.mobile_app_project;
+package com.mobile_app_project;
 
 import android.Manifest;
 import android.content.ContentValues;
@@ -26,7 +26,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.core.content.ContextCompat;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.swivelsoftware.mobile_app_project.databinding.ActivityCameraBinding;
+import com.mobile_app_project.databinding.ActivityCameraBinding;
 
 import org.jetbrains.annotations.NotNull;
 

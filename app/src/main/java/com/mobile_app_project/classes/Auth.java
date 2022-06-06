@@ -1,4 +1,4 @@
-package com.swivelsoftware.mobile_app_project.classes;
+package com.mobile_app_project.classes;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -10,7 +10,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.swivelsoftware.mobile_app_project.MainActivity;
+import com.mobile_app_project.MainActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;

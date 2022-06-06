@@ -1,4 +1,4 @@
-package com.swivelsoftware.mobile_app_project;
+package com.mobile_app_project;
 
 import android.Manifest;
 import android.app.Activity;
@@ -12,7 +12,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -29,10 +28,10 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.swivelsoftware.mobile_app_project.classes.Auth;
-import com.swivelsoftware.mobile_app_project.classes.Craft;
-import com.swivelsoftware.mobile_app_project.classes.Utils;
-import com.swivelsoftware.mobile_app_project.databinding.ActivityEditCraftBinding;
+import com.mobile_app_project.classes.Auth;
+import com.mobile_app_project.classes.Craft;
+import com.mobile_app_project.classes.Utils;
+import com.mobile_app_project.databinding.ActivityEditCraftBinding;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,8 +50,6 @@ import java.util.Objects;
 
 public class EditCraftActivity extends AppCompatActivity {
     ActivityEditCraftBinding binding;
-
-    static final String[] stores = {"Tsuen Wan", "Causeway Bay", "Mong Kok"};
 
     static final int REQUEST_LOCATION = 1000;
 
@@ -77,9 +74,7 @@ public class EditCraftActivity extends AppCompatActivity {
 
         auth = new Auth(this);
 
-        final ArrayAdapter<String> storeAdapter = new ArrayAdapter<>(this, R.layout.craft_store_list_item, stores);
-
-        binding.inputStore.setAdapter(storeAdapter);
+        Craft.setStores(this, binding.inputStore);
 
         Intent intent = getIntent();
 
@@ -298,7 +293,7 @@ public class EditCraftActivity extends AppCompatActivity {
 
                         String district = addressLine.split(", ")[1];
 
-                        if (Arrays.asList(stores).contains(district)) {
+                        if (Arrays.asList(Craft.stores).contains(district)) {
                             binding.inputStore.setText(district);
                         }
                     } catch (IOException e) {

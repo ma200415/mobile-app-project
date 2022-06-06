@@ -1,4 +1,4 @@
-package com.swivelsoftware.mobile_app_project.ui.admin;
+package com.mobile_app_project.ui.admin;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -18,12 +18,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.swivelsoftware.mobile_app_project.R;
-import com.swivelsoftware.mobile_app_project.classes.Auth;
-import com.swivelsoftware.mobile_app_project.classes.Craft;
-import com.swivelsoftware.mobile_app_project.classes.Utils;
-import com.swivelsoftware.mobile_app_project.databinding.FragmentAdminBinding;
-import com.swivelsoftware.mobile_app_project.ui.home.HomeFragment;
+import com.mobile_app_project.R;
+import com.mobile_app_project.classes.Auth;
+import com.mobile_app_project.classes.Craft;
+import com.mobile_app_project.classes.Utils;
+import com.mobile_app_project.databinding.FragmentAdminBinding;
+import com.mobile_app_project.ui.home.HomeFragment;
 
 import org.json.JSONException;
 import org.json.JSONObject;
